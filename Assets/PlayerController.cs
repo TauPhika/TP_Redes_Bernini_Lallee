@@ -7,10 +7,23 @@ public class PlayerController : MonoBehaviour
     public PlayerModel model;
     [ReadOnly] public float _jetpackDuration;
 
+    public GameObject balaPrefab;
+    public Transform puntoDisparo;
+    public float fuerzaDisparo = 10f;
+    public float tiempoVidaBala = 2f;
+
     float movementX;
     float movementY;
 
-    // Update is called once per frame
+    private Vector3 target;
+
+    [ReadOnly] public Camera cam;
+
+
+    private void Awake()
+    {
+        cam = FindObjectOfType<Camera>();
+    }
 
     private void Start()
     {
@@ -25,9 +38,22 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
               
+        if (Input.GetMouseButtonDown(0))
+        {
+            Disparar();
+        }
+
         model.transform.position += new Vector3(GetMovementX(model.speed), 
                                                 GetMovementY(model.jumpHeight, model.jetpackPower), 
                                                 0) * Time.deltaTime;
+
+
+        //Apunta al mouse
+        target = cam.ScreenToWorldPoint(Input.mousePosition);
+
+        float anguloRadianes = Mathf.Atan2(target.y - model.transform.position.y, target.x - model.transform.position.x);
+        float anguloGrados = (180 / Mathf.PI) * anguloRadianes;
+        model.transform.rotation = Quaternion.Euler(0, 0, anguloGrados);
     }
 
     float GetMovementX(float speed)
@@ -78,5 +104,22 @@ public class PlayerController : MonoBehaviour
         model.isRechargingJetpack = true;
         yield return new WaitForSeconds(model.jetpackCooldownOnGround);
         _jetpackDuration = model.jetpackDuration;
+    }
+
+    void Disparar()
+    {
+        GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
+        Rigidbody2D rb = bala.GetComponent<Rigidbody2D>();
+        rb.AddForce(puntoDisparo.right * fuerzaDisparo, ForceMode2D.Impulse);
+
+        Destroy(bala, tiempoVidaBala);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Escenario"))
+        {
+            Destroy(gameObject);
+        }
     }
 }
