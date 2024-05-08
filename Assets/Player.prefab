@@ -121,6 +121,7 @@ GameObject:
   - component: {fileID: 7558081798318744653}
   - component: {fileID: 3105647170709643140}
   - component: {fileID: -1251400072645939507}
+  - component: {fileID: 1894703109611141026}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -325,6 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd38be2bb7e33042a795cb6e0a0aab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  view: {fileID: 1894703109611141026}
   maxHealth: 5
   speed: 5
   jumpHeight: 5
@@ -362,8 +364,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3d1cdd437f93e24d881f74e5a771a08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  balaPrefab: {fileID: 296914948875792243, guid: a970c76d898ac33489eb519d6c3096f9, type: 3}
-  puntoDisparo: {fileID: 4753407146499180804}
-  fuerzaDisparo: 8
-  tiempoVidaBala: 3
-  canHurtItself: 0
+  bulletPrefab: {fileID: 296914948875792243, guid: a970c76d898ac33489eb519d6c3096f9, type: 3}
+  bulletOrigin: {fileID: 4753407146499180804}
+  bulletPower: 10
+  bulletLifeTime: 2
+  canHurtItself: 1
+--- !u!114 &1894703109611141026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2880130733978682752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 518e39b746cdcc242bac42ae64536ba5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthBarAsset: {fileID: 3896851458296691998, guid: 225987851486c63429596f9a7f8db30c, type: 3}
+  canvas: {fileID: 6837915545768360497, guid: efd2865cb98d65e47a9fd3df79077a5f, type: 3}

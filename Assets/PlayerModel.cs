@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerModel : MonoBehaviour
 {
+    public PlayerView view;
+    
     [Header("HEALTH")]
     public int maxHealth;
     int _health;
@@ -31,7 +33,8 @@ public class PlayerModel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _health = maxHealth; 
+        _health = maxHealth;
+        view = GetComponent<PlayerView>();
     }
 
     // Update is called once per frame
@@ -45,6 +48,7 @@ public class PlayerModel : MonoBehaviour
         if (healthChange != default) 
         {
             _health += healthChange;
+            view.UpdateHealthBar();
             print($"Player health: {_health}");
         } 
         return _health; 

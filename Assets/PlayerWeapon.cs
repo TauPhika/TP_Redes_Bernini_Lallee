@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PlayerWeapon : MonoBehaviour
 {
-    public GameObject balaPrefab;
-    public Transform puntoDisparo;
+    public GameObject bulletPrefab;
+    public Transform bulletOrigin;
 
     [SerializeField]
-    private float fuerzaDisparo = 10f;
+    private float bulletPower = 10f;
     [SerializeField]
-    private float tiempoVidaBala = 2f;
+    private float bulletLifeTime = 2f;
 
     public bool canHurtItself;
 
@@ -32,10 +32,10 @@ public class PlayerWeapon : MonoBehaviour
 
     void Disparar()
     {
-        GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation).GetComponent<Bullet>().SetPlayer(this);
+        GameObject bala = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation).GetComponent<Bullet>().SetPlayer(this);
         Rigidbody2D rb = bala.GetComponent<Rigidbody2D>();
-        rb.AddForce(puntoDisparo.right * fuerzaDisparo, ForceMode2D.Impulse);
+        rb.AddForce(bulletOrigin.right * bulletPower, ForceMode2D.Impulse);
 
-        Destroy(bala, tiempoVidaBala);
+        Destroy(bala, bulletLifeTime);
     }
 }
