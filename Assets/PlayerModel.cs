@@ -21,11 +21,17 @@ public class PlayerModel : MonoBehaviour
     public float jetpackCooldownOnGround;
     [ReadOnly] public bool isRechargingJetpack;
 
-    
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == 6) isAirborne = false;
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        _health = maxHealth; 
     }
 
     // Update is called once per frame
@@ -34,5 +40,13 @@ public class PlayerModel : MonoBehaviour
         
     }
 
-    public int GetHealth() { return _health; }
+    public int GetHealth(int healthChange = default) 
+    {
+        if (healthChange != default) 
+        {
+            _health += healthChange;
+            print($"Player health: {_health}");
+        } 
+        return _health; 
+    }
 }
