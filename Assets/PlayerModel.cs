@@ -5,10 +5,12 @@ using UnityEngine;
 public class PlayerModel : MonoBehaviour
 {
     public PlayerView view;
+    public PlayerController controller;
     
     [Header("HEALTH")]
     public int maxHealth;
     int _health;
+    [ReadOnly] public bool _dying = false;
 
     [Header("MOVEMENT")]
     public int speed;
@@ -33,24 +35,63 @@ public class PlayerModel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _dying = false;
         _health = maxHealth;
         view = GetComponent<PlayerView>();
+        controller = GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //if (Input.GetKeyDown(KeyCode.P)) GetHealth(-1);
     }
 
-    public int GetHealth(int healthChange = default) 
+    public float GetHealth(int healthChange = default) 
     {
         if (healthChange != default) 
         {
             _health += healthChange;
+            if (_health > maxHealth) _health = maxHealth;
             view.UpdateHealthBar();
-            print($"Player health: {_health}");
-        } 
-        return _health; 
+
+            if (healthChange < 0 && _health > 0) StartCoroutine(DamageFeedback());
+            else if(healthChange > 0) StartCoroutine(HealingFeedback());
+        }
+
+        if (_health <= 0) StartCoroutine(DeathFeedback());
+
+        float health = _health;
+        return health; 
+    }
+
+    IEnumerator DamageFeedback()
+    {
+        for (int i = 0; i < view.feedbackLength; i++)
+        {
+            view.mySprite.material.color = view.damageColor;
+            yield return new WaitForSeconds(0.25f / view.feedbackSpeed);
+            view.mySprite.material.color = view.originalColor;
+            yield return new WaitForSeconds(0.25f / view.feedbackSpeed);
+        }
+    }
+
+    IEnumerator HealingFeedback()
+    {
+        for (int i = 0; i < view.feedbackLength; i++)
+        {
+            view.mySprite.material.color = view.healingColor;
+            yield return new WaitForSeconds(0.25f / view.feedbackSpeed);
+            view.mySprite.material.color = view.originalColor;
+            yield return new WaitForSeconds(0.25f / view.feedbackSpeed);
+        }
+    }
+
+    IEnumerator DeathFeedback()
+    {
+        _dying = true;
+        view.mySprite.material.color = view.deathColor;
+        yield return new WaitForSeconds(1f / view.feedbackSpeed);
+        Destroy(gameObject);
     }
 }

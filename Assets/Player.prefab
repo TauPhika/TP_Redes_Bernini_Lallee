@@ -165,7 +165,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9fd33afbc6d776147982ff0bbd09dc0c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -187,7 +187,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 0.18396229, b: 0.18396229, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -327,7 +327,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   view: {fileID: 1894703109611141026}
+  controller: {fileID: 3105647170709643140}
   maxHealth: 5
+  _dying: 0
   speed: 5
   jumpHeight: 5
   playerRB: {fileID: -781767829404961523}
@@ -350,7 +352,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   model: {fileID: 7558081798318744653}
+  weapon: {fileID: -1251400072645939507}
   _jetpackDuration: 0
+  _timeOnGround: 0
   cam: {fileID: 0}
 --- !u!114 &-1251400072645939507
 MonoBehaviour:
@@ -366,9 +370,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 296914948875792243, guid: a970c76d898ac33489eb519d6c3096f9, type: 3}
   bulletOrigin: {fileID: 4753407146499180804}
-  bulletPower: 10
+  bulletPower: 15
   bulletLifeTime: 2
-  canHurtItself: 1
+  bulletsPerMinute: 60
+  fullAuto: 0
+  canHurtItself: 0
+  _isFiring: 0
 --- !u!114 &1894703109611141026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,4 +389,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBarAsset: {fileID: 3896851458296691998, guid: 225987851486c63429596f9a7f8db30c, type: 3}
+  jetpackBarAsset: {fileID: 4457058122622047553, guid: 8238b7c2f96be4f4aa0f7a670596670a, type: 3}
   canvas: {fileID: 6837915545768360497, guid: efd2865cb98d65e47a9fd3df79077a5f, type: 3}
+  mySprite: {fileID: 0}
+  damageColor: {r: 0.5283019, g: 0.40144372, b: 0.36133856, a: 0.6862745}
+  healingColor: {r: 0.6764371, g: 0.7830189, b: 0.4542987, a: 1}
+  deathColor: {r: 0.3773585, g: 0.29013884, b: 0.3508084, a: 1}
+  feedbackSpeed: 3
+  feedbackLength: 3
+  originalColor: {r: 0, g: 0, b: 0, a: 0}

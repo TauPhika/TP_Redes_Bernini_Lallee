@@ -5,10 +5,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public PlayerModel model;
+    public PlayerWeapon weapon;
     [ReadOnly] public float _jetpackDuration;
 
-    float movementX;
-    float movementY;
+    float _movementX;
+    float _movementY;
+    [ReadOnly] public float _timeOnGround = 0;
 
     private Vector3 target;
 
@@ -26,69 +28,97 @@ public class PlayerController : MonoBehaviour
     }
 
     void Update()
-    {      
+    {
+        if (!model._dying)
+        {
 
-        model.transform.position += new Vector3(GetMovementX(model.speed), 
-                                                GetMovementY(model.jumpHeight, model.jetpackPower), 
-                                                0) * Time.deltaTime;
+            model.transform.position += new Vector3(GetMovementX(model.speed),
+                                                    GetMovementY(model.jumpHeight, model.jetpackPower),
+                                                    0) * Time.deltaTime;
 
+            model.transform.rotation = GetAimingRotation();
 
-        //Apunta al mouse
-        target = cam.ScreenToWorldPoint(Input.mousePosition);
-
-        float anguloRadianes = Mathf.Atan2(target.y - model.transform.position.y, target.x - model.transform.position.x);
-        float anguloGrados = (180 / Mathf.PI) * anguloRadianes;
-        model.transform.rotation = Quaternion.Euler(0, 0, anguloGrados);
+            if (weapon.FiringInput() && !weapon._isFiring)
+            {
+                StartCoroutine(weapon.Disparar());
+            }
+        }
     }
 
     float GetMovementX(float speed)
     {
-        movementX = Input.GetAxis("Horizontal") * speed;
-        return movementX;
+        _movementX = Input.GetAxis("Horizontal") * speed;
+        return _movementX;
     }
 
     float GetMovementY(float height, float power)
     {
-        if (Input.GetKeyDown(KeyCode.Space) && model.isAirborne == false)
+        if (Input.GetKeyDown(KeyCode.Space) && !model.isAirborne)
         {
             model.playerRB.AddForce(Vector3.up * height, ForceMode2D.Impulse);
             model.isAirborne = true;
         }
 
-        if (model.isAirborne) StartCoroutine(UseJetpack(power));
-        else if(!model.isRechargingJetpack) StartCoroutine(RechargeJetpack());
+        if (model.isAirborne)
+        {
+            StartCoroutine(UseJetpack(power));
+            RechargeJetpack(false);
+        }
+        else RechargeJetpack(true);
 
-        return movementY;
+
+        return _movementY;
+    }
+
+    Quaternion GetAimingRotation()
+    {
+        //Apunta al mouse
+        target = cam.ScreenToWorldPoint(Input.mousePosition);
+
+        float radians = Mathf.Atan2(target.y - model.transform.position.y, target.x - model.transform.position.x);
+        float degrees = (180 / Mathf.PI) * radians;
+        return Quaternion.Euler(0, 0, degrees);
     }
     
     IEnumerator UseJetpack(float power)
     {
         model.isRechargingJetpack = false;
 
-        if (_jetpackDuration >= 0 )
+        if (Input.GetAxis("Vertical") != 0)
         {
-            if(Input.GetAxis("Vertical") != 0)
+            if (_jetpackDuration > 0)
             {
                 _jetpackDuration -= Time.deltaTime;
-                movementY = Input.GetAxis("Vertical") * power;
+                _movementY = Input.GetAxis("Vertical") * power;
                 yield return null;
             }
-        }
-        else if (Input.GetAxis("Vertical") != 0)
-        {
-            movementY = 0;
-            yield return new WaitForSeconds(model.jetpackCooldown);
-            _jetpackDuration = model.jetpackDuration;          
+            else
+            {
+                //_movementY = 0;
+                yield return new WaitForSeconds(model.jetpackCooldown);
+                _jetpackDuration = model.jetpackDuration;
+            }
         }
 
     }
 
-    IEnumerator RechargeJetpack()
+    void RechargeJetpack(bool recharging)
     {        
-        movementY = 0;
-        model.isRechargingJetpack = true;
-        yield return new WaitForSeconds(model.jetpackCooldownOnGround);
-        _jetpackDuration = model.jetpackDuration;
+
+        if (recharging)
+        {
+            _timeOnGround += Time.deltaTime;
+            if (_timeOnGround >= model.jetpackCooldownOnGround) 
+            {
+                _jetpackDuration = model.jetpackDuration;
+                _timeOnGround = 0;
+            }
+
+            _movementY = 0;
+        }
+        else _timeOnGround = 0;
+
+        
     }
 
 }
