@@ -1922,6 +1922,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 2880130733978682752, guid: 3b5d4b08aebdaa94daee19771ff43231, type: 3}
+  waitingCanvas: {fileID: 31468591275596972, guid: cddb5e6fa0e64074bb2995b48a533ca0, type: 3}
   spawningPoints:
   - {fileID: 1672489290}
   - {fileID: 873846142}
