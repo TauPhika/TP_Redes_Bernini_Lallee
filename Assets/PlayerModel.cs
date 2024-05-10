@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PlayerModel : MonoBehaviour
 {
+    #region VARIABLES
     public PlayerView view;
     public PlayerController controller;
-    
+        
     [Header("HEALTH")]
     public int maxHealth;
     int _health;
@@ -15,8 +16,12 @@ public class PlayerModel : MonoBehaviour
     [Header("MOVEMENT")]
     public int speed;
     public int jumpHeight;
+    public int dashForce;
+    public bool limitDashing;
+    public float dashCooldown;
     public Rigidbody2D playerRB;
     [ReadOnly] public bool isAirborne;
+    [ReadOnly] public bool hasDashed;
 
     [Header("JETPACK")]
     public int jetpackPower;
@@ -24,7 +29,7 @@ public class PlayerModel : MonoBehaviour
     public float jetpackCooldown;
     public float jetpackCooldownOnGround;
     [ReadOnly] public bool isRechargingJetpack;
-
+    #endregion
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -36,17 +41,20 @@ public class PlayerModel : MonoBehaviour
     void Start()
     {
         _dying = false;
+
+        if (!limitDashing) 
+        {
+            dashCooldown = 0;
+            Destroy(view.dashAsset);
+        }  
+
         _health = maxHealth;
         view = GetComponent<PlayerView>();
         controller = GetComponent<PlayerController>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        //if (Input.GetKeyDown(KeyCode.P)) GetHealth(-1);
-    }
 
+    // Modifica la salud en base al valor recibido, da el feedback correspondiente y devuelve el resultado final.
     public float GetHealth(int healthChange = default) 
     {
         if (healthChange != default) 
@@ -65,6 +73,7 @@ public class PlayerModel : MonoBehaviour
         return health; 
     }
 
+    #region FEEDBACKS
     IEnumerator DamageFeedback()
     {
         for (int i = 0; i < view.feedbackLength; i++)
@@ -93,5 +102,7 @@ public class PlayerModel : MonoBehaviour
         view.mySprite.material.color = view.deathColor;
         yield return new WaitForSeconds(1f / view.feedbackSpeed);
         Destroy(gameObject);
+        print("PERDISTE");
     }
+    #endregion
 }

@@ -1927,6 +1927,7 @@ MonoBehaviour:
   - {fileID: 873846142}
   - {fileID: 1645788393}
   - {fileID: 568719137}
+  allPlayers: []
 --- !u!4 &1843566308
 Transform:
   m_ObjectHideFlags: 0

@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class PlayerSpawner : MonoBehaviour
 {
+    public static PlayerSpawner instance;
+    
     public GameObject player;
 
     public GameObject[] spawningPoints;
+    public List<GameObject> allPlayers = new();
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            Instantiate(player, spawningPoints[Random.Range(0, spawningPoints.Length)].transform);
+            var p = Instantiate(player, spawningPoints[Random.Range(0, spawningPoints.Length)].transform);
+            allPlayers.Add(p);
         }
     }
 }

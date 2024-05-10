@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public PlayerWeapon thisPlayer;
+    PlayerWeapon _thisPlayer;
     
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        else if (other.gameObject.tag == "Player" && thisPlayer.CanHurtItself(other, thisPlayer.canHurtItself))
+        else if (other.gameObject.tag == "Player" && _thisPlayer.CanHurtItself(other, _thisPlayer.canHurtItself))
         {
             other.gameObject.GetComponent<PlayerModel>().GetHealth(-1);
             Destroy(gameObject);
@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
 
     public GameObject SetPlayer(PlayerWeapon player) 
     { 
-        if (thisPlayer == null) thisPlayer = player;
+        if (_thisPlayer == null) _thisPlayer = player;
         return this.gameObject;
     }
 
