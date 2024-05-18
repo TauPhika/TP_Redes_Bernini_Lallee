@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerWeapon : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class PlayerWeapon : MonoBehaviour
     [SerializeField] private float bulletPower = 10f;
     [SerializeField] private float bulletLifeTime = 2f;
     [Range(60,600)] public int bulletsPerMinute;
+    [SerializeField] public TextMeshPro reloadText;
 
     [Header("EXTRAS")]
     public bool fullAuto;
@@ -24,6 +26,20 @@ public class PlayerWeapon : MonoBehaviour
     {
         _isFiring = false;
         _model = gameObject.GetComponent<PlayerModel>();
+
+        reloadText = Instantiate(new GameObject(), 
+                                _model.gameObject.transform.position + new Vector3(4, 0, 0),
+                                Quaternion.identity, 
+                                _model.gameObject.transform).
+                                AddComponent<TextMeshPro>();
+
+        reloadText.fontSize = 5;
+    }
+
+    private void Update()
+    {
+        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4, 0, 0);
+        reloadText.transform.rotation = Quaternion.identity;
     }
 
     public bool CanHurtItself(Collider2D other, bool itCan)
@@ -48,7 +64,10 @@ public class PlayerWeapon : MonoBehaviour
 
         Destroy(bullet, bulletLifeTime);
 
+        if (bulletsPerMinute <= 150 && !fullAuto) reloadText.text = "Rechambering...";
+
         yield return new WaitForSeconds(60f / bulletsPerMinute);
+        reloadText.text = "";
         _isFiring = false;
     }
 }

@@ -377,6 +377,7 @@ MonoBehaviour:
   bulletPower: 15
   bulletLifeTime: 2
   bulletsPerMinute: 60
+  reloadText: {fileID: 0}
   fullAuto: 0
   canHurtItself: 0
   _isFiring: 0
