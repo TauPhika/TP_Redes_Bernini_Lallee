@@ -28,7 +28,7 @@ public class PlayerWeapon : MonoBehaviour
         _model = gameObject.GetComponent<PlayerModel>();
 
         reloadText = Instantiate(new GameObject(), 
-                                _model.gameObject.transform.position + new Vector3(4, 0, 0),
+                                _model.gameObject.transform.position + new Vector3(4.1f, -0.4f, 0),
                                 Quaternion.identity, 
                                 _model.gameObject.transform).
                                 AddComponent<TextMeshPro>();
@@ -38,7 +38,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4, 0, 0);
+        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4.1f, -0.4f, 0);
         reloadText.transform.rotation = Quaternion.identity;
     }
 
@@ -64,7 +64,7 @@ public class PlayerWeapon : MonoBehaviour
 
         Destroy(bullet, bulletLifeTime);
 
-        if (bulletsPerMinute <= 150 && !fullAuto) reloadText.text = "Rechambering...";
+        if (bulletsPerMinute <= 140 && !fullAuto) reloadText.text = "Rechambering...";
 
         yield return new WaitForSeconds(60f / bulletsPerMinute);
         reloadText.text = "";
