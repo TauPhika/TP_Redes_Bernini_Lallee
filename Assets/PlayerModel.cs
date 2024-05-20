@@ -29,11 +29,15 @@ public class PlayerModel : MonoBehaviour
     public float jetpackCooldown;
     public float jetpackCooldownOnGround;
     [ReadOnly] public bool isRechargingJetpack;
+
+
+    Ray ray;
+    RaycastHit hit;
     #endregion
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == 6) isAirborne = false;
+        if (/*Physics.Raycast(ray, 0.5f) &&*/ collision.gameObject.layer == 6) isAirborne = false;
     }
 
 
@@ -51,8 +55,9 @@ public class PlayerModel : MonoBehaviour
         _health = maxHealth;
         view = GetComponent<PlayerView>();
         controller = GetComponent<PlayerController>();
-    }
 
+        ray = new Ray(transform.position, Vector3.down);
+    }
 
     // Modifica la salud en base al valor recibido, da el feedback correspondiente y devuelve el resultado final.
     public float GetHealth(int healthChange = default) 
