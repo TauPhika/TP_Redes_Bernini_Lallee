@@ -147,9 +147,13 @@ GameObject:
   m_Component:
   - component: {fileID: 9221781867101464894}
   - component: {fileID: 5312767852423723151}
+  - component: {fileID: -999036618005694295}
   - component: {fileID: -781767829404961523}
   - component: {fileID: 4331203925728967505}
   - component: {fileID: 3947735461744173718}
+  - component: {fileID: -7651849339509316009}
+  - component: {fileID: 3663168732680765099}
+  - component: {fileID: -3537078069541126782}
   - component: {fileID: 7558081798318744653}
   - component: {fileID: 3105647170709643140}
   - component: {fileID: -1251400072645939507}
@@ -229,6 +233,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-999036618005694295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2880130733978682752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ecc4b106d616749ae9d0e6f36b378a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
 --- !u!50 &-781767829404961523
 Rigidbody2D:
   serializedVersion: 4
@@ -346,6 +363,78 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-7651849339509316009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2880130733978682752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1014831617, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Type: 2
+  SphereRadius: 0
+  BoxExtents: {x: 0, y: 0, z: 0}
+  Offset: {x: 0, y: 0, z: 0}
+  Root: {fileID: 0}
+  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+--- !u!114 &3663168732680765099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2880130733978682752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1779252708, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  InterpolationSpace: 0
+  InterpolationTarget: {fileID: 9221781867101464894}
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  UseLegacySharedModeInterpolation: 0
+  TargetInterpolationDelay: 0.03
+--- !u!114 &-3537078069541126782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2880130733978682752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectInterest: 1
+  DefaultInterestGroups: []
+  DestroyWhenStateAuthorityLeaves: 1
+  AllowStateAuthorityOverride: 1
+  AoiPositionSource: {fileID: 0}
+  Flags: 2305
+  NetworkGuid:
+    RawGuidValue: 3b5d4b08aebdaa94daee19771ff43231
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: -999036618005694295}
+  - {fileID: 3663168732680765099}
+  - {fileID: 7558081798318744653}
+  SimulationBehaviours: []
 --- !u!114 &7558081798318744653
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,8 +447,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd38be2bb7e33042a795cb6e0a0aab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   view: {fileID: 1894703109611141026}
   controller: {fileID: 3105647170709643140}
+  weapon: {fileID: -1251400072645939507}
+  runner: {fileID: 5005964557963021443, guid: 917dc17874d464d438b8cf1d44fef79d, type: 3}
   maxHealth: 5
   _dying: 0
   speed: 5
@@ -367,7 +459,7 @@ MonoBehaviour:
   dashForce: 5
   limitDashing: 1
   dashCooldown: 1.5
-  playerRB: {fileID: -781767829404961523}
+  playerRB: {fileID: 3663168732680765099}
   isAirborne: 0
   hasDashed: 0
   jetpackPower: 6
@@ -392,6 +484,7 @@ MonoBehaviour:
   _jetpackDuration: 0
   _timeOnGround: 0
   cam: {fileID: 0}
+  _isFirePressed: 0
 --- !u!114 &-1251400072645939507
 MonoBehaviour:
   m_ObjectHideFlags: 0

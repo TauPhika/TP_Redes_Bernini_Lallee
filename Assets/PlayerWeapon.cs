@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Fusion;
 
 public class PlayerWeapon : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class PlayerWeapon : MonoBehaviour
     public bool fullAuto;
     public bool canHurtItself;
     [ReadOnly] public bool _isFiring;
+    [Networked(OnChanged = nameof(Fire))] public bool fire { get; set; }
     #endregion
 
     private void Awake()
@@ -52,15 +54,17 @@ public class PlayerWeapon : MonoBehaviour
         if (fullAuto) return Input.GetMouseButton(0); else return Input.GetMouseButtonDown(0);
     }
 
+    public void Fire() { StartCoroutine(FireWeapon()); }
+
     public IEnumerator FireWeapon()
     {
         _isFiring = true;
 
-        GameObject bullet = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation).
+        GameObject bullet = _model.runner.Spawn(bulletPrefab, bulletOrigin.transform.position, bulletOrigin.transform.rotation).
                             GetComponent<Bullet>().SetPlayer(this);
 
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        rb.AddForce(bulletOrigin.right * bulletPower, ForceMode2D.Impulse);
+        NetworkRigidbody2D rb = bullet.GetComponent<NetworkRigidbody2D>();
+        rb.Rigidbody.AddForce(bulletOrigin.transform.right * bulletPower, ForceMode2D.Impulse);
 
         Destroy(bullet, bulletLifeTime);
 

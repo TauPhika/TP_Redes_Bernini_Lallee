@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Fusion;
 
-public class PlayerModel : MonoBehaviour
+public class PlayerModel : NetworkBehaviour
 {
     #region VARIABLES
+    public static PlayerModel local { get; private set; }
+    
     public PlayerView view;
     public PlayerController controller;
+    public PlayerWeapon weapon;
+    public NetworkRunner runner;
         
     [Header("HEALTH")]
     public int maxHealth;
@@ -19,7 +24,7 @@ public class PlayerModel : MonoBehaviour
     public int dashForce;
     public bool limitDashing;
     public float dashCooldown;
-    public Rigidbody2D playerRB;
+    public NetworkRigidbody2D playerRB;
     [ReadOnly] public bool isAirborne;
     [ReadOnly] public bool hasDashed;
 
@@ -30,6 +35,7 @@ public class PlayerModel : MonoBehaviour
     public float jetpackCooldownOnGround;
     [ReadOnly] public bool isRechargingJetpack;
 
+    NetworkInputData _netInputs;
 
     Ray ray;
     RaycastHit hit;
@@ -40,23 +46,49 @@ public class PlayerModel : MonoBehaviour
         if (/*Physics.Raycast(ray, 0.5f) &&*/ collision.gameObject.layer == 6) isAirborne = false;
     }
 
-
-    // Start is called before the first frame update
-    void Start()
+    public override void Spawned()
     {
+        if (Object.HasInputAuthority) local = this;
+
         _dying = false;
 
-        if (!limitDashing) 
+        if (!limitDashing)
         {
             dashCooldown = 0;
             Destroy(view.dashAsset);
-        }  
+        }
 
         _health = maxHealth;
         view = GetComponent<PlayerView>();
         controller = GetComponent<PlayerController>();
 
         ray = new Ray(transform.position, Vector3.down);
+    }
+
+    public void Update()
+    {
+        if (!_dying)
+        {
+            var move = controller.Move();
+
+            //if (_netInputs.movementX != 0 || _netInputs.isJetpackPressed || _netInputs.movementY != 0) controller.Move();
+
+            //if (_netInputs.isJumpPressed && !isAirborne) controller.Jump(jumpHeight);
+
+            var rot = controller.GetAimingRotation();
+
+            if(_netInputs.rotation != Quaternion.identity) transform.rotation = rot;
+
+            if (weapon.FiringInput() && !weapon._isFiring)
+            {
+                controller._isFirePressed = true;
+                weapon.fire = true;
+            }
+
+            if(_netInputs.isDashPressed) controller.CheckForDash(dashForce);
+        }
+
+        print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
     }
 
     // Modifica la salud en base al valor recibido, da el feedback correspondiente y devuelve el resultado final.

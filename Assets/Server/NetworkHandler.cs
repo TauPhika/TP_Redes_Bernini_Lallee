@@ -22,6 +22,7 @@ public class NetworkHandler : MonoBehaviour
         var sceneManager = GetComponent<NetworkSceneManagerDefault>();
 
         _networkRunner.ProvideInput = true;
+       
 
         return _networkRunner.StartGame(new StartGameArgs()
         {

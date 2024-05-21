@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Fusion;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,17 +11,22 @@ public class PlayerController : MonoBehaviour
     public PlayerWeapon weapon;
     [ReadOnly] public float _jetpackDuration;
 
-    float _movementX;
-    float _movementY;
     [ReadOnly] public float _timeOnGround = 0;
 
     private Vector3 target;
     [ReadOnly] public Camera cam;
+
+    NetworkInputData _netInputs;
+    bool _isJumpPressed;
+    bool _isJetpackPressed;
+    [ReadOnly] public bool _isFirePressed;
+    bool _isDashPressed;
     #endregion
 
     private void Awake()
     {
         cam = FindObjectOfType<Camera>();
+        _netInputs = new NetworkInputData();
     }
 
     private void Start()
@@ -29,42 +36,33 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (!model._dying)
-        {
+        
+    }
 
-            model.transform.position += new Vector3(GetMovementX(model.speed),
-                                                    GetMovementY(model.jumpHeight, model.jetpackPower),
-                                                    0) * Time.deltaTime;
+    public NetworkInputData GetLocalInputs()
+    {
+        _netInputs.isJumpPressed = _isJumpPressed; _isJumpPressed = false;
+        _netInputs.isDashPressed = _isDashPressed; _isDashPressed = false;
+        _netInputs.isJetpackPressed = _isJetpackPressed; _isJetpackPressed = false;
+        _netInputs.isFirePressed = _isFirePressed; _isFirePressed = false;
 
-            model.transform.rotation = GetAimingRotation();
+        print(_isJumpPressed);
 
-            if (weapon.FiringInput() && !weapon._isFiring)
-            {
-                StartCoroutine(weapon.FireWeapon());
-            }
-
-            CheckForDash(model.dashForce);
-        }
+        return _netInputs;
     }
 
     #region MOVEMENT
-    
+
     // Devuelve el movimiento normal en x
-    float GetMovementX(float speed)
+    public float GetMovementX(float speed)
     {
-        _movementX = Input.GetAxis("Horizontal") * speed;
-        return _movementX;
+        _netInputs.movementX = Input.GetAxis("Horizontal") * speed;
+        return _netInputs.movementX;
     }
 
     // Devuelve el movimiento en Y, incluyendo salto y jetpack.
-    float GetMovementY(float height, float power)
+    public float GetMovementY(float height, float power)
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !model.isAirborne)
-        {
-            model.playerRB.AddForce(Vector3.up * height, ForceMode2D.Impulse);
-            model.isAirborne = true;
-        }
-
         if (model.isAirborne)
         {
             StartCoroutine(UseJetpack(power));
@@ -73,17 +71,38 @@ public class PlayerController : MonoBehaviour
         else RechargeJetpack(true);
 
 
-        return _movementY;
+        return _netInputs.movementY;
+    }
+
+    public Vector3 Jump(float height)
+    {
+        _isJumpPressed = true;
+        model.isAirborne = true;
+        model.playerRB.Rigidbody.AddForce(Vector3.up * height, ForceMode2D.Impulse);
+        return Vector3.up * height;
     }
 
     // Devuelve la rotacion en base a la posicion del mouse
-    Quaternion GetAimingRotation()
+    public Quaternion GetAimingRotation()
     {
         target = cam.ScreenToWorldPoint(Input.mousePosition);
 
         float radians = Mathf.Atan2(target.y - model.transform.position.y, target.x - model.transform.position.x);
         float radToDegrees = (180 / Mathf.PI) * radians;
-        return Quaternion.Euler(0, 0, radToDegrees);
+        _netInputs.rotation = Quaternion.Euler(0, 0, radToDegrees);
+        return _netInputs.rotation;
+    }
+
+
+    public Vector3 Move()
+    {
+        var move = new Vector3(GetMovementX(model.speed),
+                           GetMovementY(model.jumpHeight, model.jetpackPower),
+                           0) * Time.deltaTime;
+
+        model.transform.position += move;
+
+        return move;
     }
     #endregion
 
@@ -94,10 +113,12 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetAxis("Vertical") != 0)
         {
+            _isJetpackPressed = true;
+            
             if (_jetpackDuration > 0)
             {
                 _jetpackDuration -= Time.deltaTime;
-                _movementY = Input.GetAxis("Vertical") * power;
+                _netInputs.movementY = Input.GetAxis("Vertical") * power;
                 yield return null;
             }
             else
@@ -122,7 +143,7 @@ public class PlayerController : MonoBehaviour
                 _timeOnGround = 0;
             }
 
-            _movementY = 0;
+            _netInputs.movementY = 0;
         }
         else _timeOnGround = 0;
     }
@@ -133,7 +154,7 @@ public class PlayerController : MonoBehaviour
     bool pressedFirstTime = false;
     float lastPressedTime;
 
-    void CheckForDash(int force)
+    public void CheckForDash(int force)
     {
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.A))
         {
@@ -146,10 +167,10 @@ public class PlayerController : MonoBehaviour
             {
                 // Esto es cierto si presionamos dos veces dentro del tiempo determinado
                 bool isDoublePress = Time.time - lastPressedTime <= doubleTapSpeed;
-              
+
                 if (isDoublePress)
                 {
-                    if(!model.hasDashed) StartCoroutine(Dash(dir, force));
+                    if (!model.hasDashed) { _isDashPressed = true; StartCoroutine(Dash(dir, force));}
                     pressedFirstTime = false;
                 }
 
@@ -161,7 +182,7 @@ public class PlayerController : MonoBehaviour
 
             lastPressedTime = Time.time;
         }
-   
+
 
         if (pressedFirstTime && Time.time - lastPressedTime > doubleTapSpeed)
         {
@@ -172,10 +193,10 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    IEnumerator Dash(Vector3 dir, float force)
+    public IEnumerator Dash(Vector3 dir, float force)
     {
         model.hasDashed = true;
-        model.playerRB.AddForce(dir * force, ForceMode2D.Impulse);
+        model.playerRB.Rigidbody.AddForce(dir * force, ForceMode2D.Impulse);
         model.view.UpdateDashImage(false);
 
         yield return new WaitForSeconds(model.dashCooldown);
@@ -185,3 +206,5 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 }
+
+
