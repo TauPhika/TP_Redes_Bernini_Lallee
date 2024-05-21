@@ -26,12 +26,13 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         cam = FindObjectOfType<Camera>();
-        _netInputs = new NetworkInputData();
+        
     }
 
     private void Start()
     {
         _jetpackDuration = model.jetpackDuration;
+        _netInputs = new NetworkInputData();
     }
 
     void Update()

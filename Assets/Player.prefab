@@ -147,7 +147,6 @@ GameObject:
   m_Component:
   - component: {fileID: 9221781867101464894}
   - component: {fileID: 5312767852423723151}
-  - component: {fileID: -999036618005694295}
   - component: {fileID: -781767829404961523}
   - component: {fileID: 4331203925728967505}
   - component: {fileID: 3947735461744173718}
@@ -233,19 +232,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-999036618005694295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2880130733978682752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8ecc4b106d616749ae9d0e6f36b378a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
 --- !u!50 &-781767829404961523
 Rigidbody2D:
   serializedVersion: 4
@@ -431,7 +417,6 @@ MonoBehaviour:
     RawGuidValue: 3b5d4b08aebdaa94daee19771ff43231
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: -999036618005694295}
   - {fileID: 3663168732680765099}
   - {fileID: 7558081798318744653}
   SimulationBehaviours: []
