@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour
             
             if (_jetpackDuration > 0)
             {
-                _jetpackDuration -= Time.deltaTime;
+                _jetpackDuration -= Time.fixedDeltaTime;
                 _netInputs.movementY = Input.GetAxis("Vertical") * power;
                 yield return null;
             }
@@ -139,7 +139,7 @@ public class PlayerController : MonoBehaviour
     {
         if (recharging)
         {
-            _timeOnGround += Time.deltaTime;
+            _timeOnGround += Time.fixedDeltaTime;
             if (_timeOnGround >= model.jetpackCooldownOnGround)
             {
                 _jetpackDuration = model.jetpackDuration;

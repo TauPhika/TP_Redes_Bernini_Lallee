@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using System;
 
 public class PlayerModel : NetworkBehaviour
 {
@@ -15,7 +16,8 @@ public class PlayerModel : NetworkBehaviour
         
     [Header("HEALTH")]
     public int maxHealth;
-    int _health;
+    //[Networked(OnChanged = nameof(OnLifeUpdate))]
+    int _health { get; set; }
     [ReadOnly] public bool _dying = false;
 
     [Header("MOVEMENT")]
@@ -39,6 +41,9 @@ public class PlayerModel : NetworkBehaviour
 
     Ray ray;
     RaycastHit hit;
+
+    public event Action<float> OnLifeUpdate = delegate { };
+    public event Action OnPlayerDespawn = delegate { };
     #endregion
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -90,8 +95,11 @@ public class PlayerModel : NetworkBehaviour
         //print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
     }
 
+    public float GetHealth(int healthChange = default) => RPC_GetHealth(healthChange);
+
     // Modifica la salud en base al valor recibido, da el feedback correspondiente y devuelve el resultado final.
-    public float GetHealth(int healthChange = default) 
+    //[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public float RPC_GetHealth(int healthChange = default) 
     {
         if (healthChange != default) 
         {
@@ -137,8 +145,21 @@ public class PlayerModel : NetworkBehaviour
         _dying = true;
         view.mySprite.material.color = view.deathColor;
         yield return new WaitForSeconds(1f / view.feedbackSpeed);
-        Destroy(gameObject);
+        Runner.Despawn(this.Object);
         print("PERDISTE");
     }
     #endregion
+
+    static void OnFiringChanged(Changed<PlayerModel> changed)
+    {
+        var updateFiring = changed.Behaviour.weapon._isFiring;
+        changed.LoadOld();
+        var oldFiring = changed.Behaviour.weapon._isFiring;
+    }
+
+    static void OnLifeChanged(Changed<PlayerModel> changed)
+    {
+        var updateLife = changed.Behaviour;
+        updateLife.OnLifeUpdate(updateLife._health / updateLife.maxHealth);
+    }
 }

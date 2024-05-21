@@ -79,8 +79,8 @@ public class PlayerView : MonoBehaviour
     #region UPDATERS
     public void UpdateHealthBar()
     {
-        healthBar.fillAmount = model.GetHealth() / model.maxHealth;
-        print($"Player health: {model.GetHealth()}");
+        healthBar.fillAmount = model.RPC_GetHealth() / model.maxHealth;
+        print($"Player health: {model.RPC_GetHealth()}");
     }
 
     public void UpdateJetpackBar()

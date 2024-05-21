@@ -15,7 +15,7 @@ public class Bullet : NetworkBehaviour
         }
         else if (other.gameObject.tag == "Player" && _thisPlayer.CanHurtItself(other, _thisPlayer.canHurtItself))
         {
-            other.gameObject.GetComponent<PlayerModel>().GetHealth(-1);
+            other.gameObject.GetComponent<PlayerModel>().RPC_GetHealth(-1);
             Destroy(gameObject);
         }
        
