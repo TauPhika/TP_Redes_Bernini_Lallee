@@ -16,11 +16,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public GameObject[] spawningPoints;
     [ReadOnly] public List<PlayerModel> allPlayers = new();
 
-    private void OnEnable()
-    {
-        if (runner) runner.AddCallbacks(this);
-    }
-
     private void Awake()
     {
         instance = this;
@@ -46,9 +41,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        print("upsn't");
-
-        if (runner.Topology == SimulationConfig.Topologies.Shared)
+        if(runner.Topology == SimulationConfig.Topologies.Shared)
         {
 
         }
@@ -64,13 +57,11 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     #region UNUSED
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
-        //print("b");
         throw new System.NotImplementedException();
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        //print("a");
         throw new System.NotImplementedException();
     }
 
@@ -81,7 +72,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
-        //print("d");
         throw new System.NotImplementedException();
     }
 
@@ -93,7 +83,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
     {
-        //print("c");
         throw new System.NotImplementedException();
     }
 
@@ -129,7 +118,6 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        print("ups");
         throw new System.NotImplementedException();
     }
 

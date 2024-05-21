@@ -11,6 +11,7 @@ public class PlayerModel : NetworkBehaviour
     public PlayerView view;
     public PlayerController controller;
     public PlayerWeapon weapon;
+    public NetworkRunner runner;
         
     [Header("HEALTH")]
     public int maxHealth;
@@ -62,12 +63,6 @@ public class PlayerModel : NetworkBehaviour
         controller = GetComponent<PlayerController>();
 
         ray = new Ray(transform.position, Vector3.down);
-    }
-
-    public override void FixedUpdateNetwork()
-    {
-        PlayerSpawner.instance.OnInput(Runner, new NetworkInput());
-        print("x");
     }
 
     public void Update()
