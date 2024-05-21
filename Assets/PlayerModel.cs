@@ -72,28 +72,22 @@ public class PlayerModel : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        if (!_dying)
+        if (!_dying && GetInput(out _netInputs))
         {
-            //var move = controller.Move();
+            controller.Move();
 
-            if (_netInputs.movementX != 0 || _netInputs.isJetpackPressed || _netInputs.movementY != 0) controller.Move();
-
-            //if (_netInputs.isJumpPressed && !isAirborne) controller.Jump(jumpHeight);
+            if (_netInputs.isJumpPressed && !isAirborne) controller.Jump(jumpHeight);
 
             var rot = controller.GetAimingRotation();
 
             if(_netInputs.rotation != Quaternion.identity) transform.rotation = rot;
 
-            if (weapon.FiringInput() && !weapon._isFiring)
-            {
-                controller._isFirePressed = true;
-                weapon.fire = true;
-            }
+            if (_netInputs.isFirePressed && !weapon._isFiring) weapon.Fire();
 
             if(_netInputs.isDashPressed) controller.CheckForDash(dashForce);
         }
 
-        print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
+        //print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
     }
 
     // Modifica la salud en base al valor recibido, da el feedback correspondiente y devuelve el resultado final.

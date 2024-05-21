@@ -7,6 +7,7 @@ public struct NetworkInputData : INetworkInput
 {
     public float movementX;
     public float movementY;
+    public Vector3 position;
     public Quaternion rotation;
     public NetworkBool isFiring;
     public NetworkBool isFirePressed;

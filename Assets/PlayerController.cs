@@ -36,7 +36,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _isJumpPressed = true;
+        }
+        if (weapon.FiringInput()) _isFirePressed = true;
     }
 
     public NetworkInputData GetLocalInputs()
@@ -76,7 +80,6 @@ public class PlayerController : MonoBehaviour
 
     public Vector3 Jump(float height)
     {
-        _isJumpPressed = true;
         model.isAirborne = true;
         model.playerRB.Rigidbody.AddForce(Vector3.up * height, ForceMode2D.Impulse);
         return Vector3.up * height;
@@ -98,7 +101,7 @@ public class PlayerController : MonoBehaviour
     {
         var move = new Vector3(GetMovementX(model.speed),
                            GetMovementY(model.jumpHeight, model.jetpackPower),
-                           0) * Time.deltaTime;
+                           0) * Time.fixedDeltaTime;
 
         model.transform.position += move;
 

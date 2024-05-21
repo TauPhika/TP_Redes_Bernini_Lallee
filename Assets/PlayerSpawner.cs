@@ -62,27 +62,27 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     #region UNUSED
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
     {
-        throw new System.NotImplementedException();
+
     }
 
 
@@ -93,42 +93,42 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, System.ArraySegment<byte> data)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnSceneLoadDone(NetworkRunner runner)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnSceneLoadStart(NetworkRunner runner)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        throw new System.NotImplementedException();
+
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
     {
-        throw new System.NotImplementedException();
+
     }
     #endregion
 
