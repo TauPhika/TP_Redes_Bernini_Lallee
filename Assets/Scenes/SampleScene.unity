@@ -1892,59 +1892,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &1843566306
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1843566308}
-  - component: {fileID: 1843566307}
-  m_Layer: 0
-  m_Name: PlayerSpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1843566307
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1843566306}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b79bbb6cdb351d4abcbfa2c37ff7d7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 7558081798318744653, guid: 3b5d4b08aebdaa94daee19771ff43231, type: 3}
-  runner: {fileID: 442551159902677735}
-  waitingCanvas: {fileID: 31468591275596972, guid: cddb5e6fa0e64074bb2995b48a533ca0, type: 3}
-  spawningPoints:
-  - {fileID: 1672489290}
-  - {fileID: 873846142}
-  - {fileID: 1645788393}
-  - {fileID: 568719137}
-  allPlayers: []
---- !u!4 &1843566308
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1843566306}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.0122378, y: -0.51141346, z: 0.0333194}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &442551159902677735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1982,6 +1929,7 @@ GameObject:
   - component: {fileID: 442551159902677735}
   - component: {fileID: 6736387323161819458}
   - component: {fileID: 647129075768816139}
+  - component: {fileID: 8777765558842095606}
   m_Layer: 0
   m_Name: NetworkRunner
   m_TagString: Untagged
@@ -2018,13 +1966,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8777765558842095606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1857991160969756956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b79bbb6cdb351d4abcbfa2c37ff7d7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7558081798318744653, guid: 3b5d4b08aebdaa94daee19771ff43231, type: 3}
+  runner: {fileID: 442551159902677735}
+  waitingCanvas: {fileID: 31468591275596972, guid: cddb5e6fa0e64074bb2995b48a533ca0, type: 3}
+  spawningPoints:
+  - {fileID: 1672489290}
+  - {fileID: 873846142}
+  - {fileID: 1645788393}
+  - {fileID: 568719137}
+  allPlayers: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 1096889041}
-  - {fileID: 1843566308}
   - {fileID: 1286830143}
   - {fileID: 1381982433}
   - {fileID: 8777765558842095605}

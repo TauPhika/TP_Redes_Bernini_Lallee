@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PhotonAppSettings
   m_EditorClassIdentifier: 
   AppSettings:
-    AppIdFusion: 787c4524-e327-4869-a628-70728eec9853
+    AppIdFusion: 17ca2487-a297-4c22-bd33-ee63e18b0571
     AppIdChat: 
     AppIdVoice: 
     AppVersion: 

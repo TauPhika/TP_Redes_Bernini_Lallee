@@ -27,11 +27,22 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (Input.GetKeyDown(KeyCode.F1) && allPlayers.Count < 4)
         {
+            
+        }
+    }
+
+    public void OnConnectedToServer(NetworkRunner runner)
+    {
+        print("se conecto");
+
+        if(runner.Topology == SimulationConfig.Topologies.Shared)
+        {
             waitingCanvas.SetActive(false);
 
-            var localPlayer = Instantiate(player,
+            var localPlayer = runner.Spawn(player,
                                            spawningPoints[Random.Range(0, spawningPoints.Length)].transform.position,
-                                           Quaternion.identity);
+                                           Quaternion.identity,
+                                           runner.LocalPlayer);
 
             _controller = localPlayer.GetComponent<PlayerController>();
 
@@ -39,16 +50,10 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
 
-    public void OnConnectedToServer(NetworkRunner runner)
-    {
-        if(runner.Topology == SimulationConfig.Topologies.Shared)
-        {
-
-        }
-    }
-
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        print("input");
+
         if (!PlayerModel.local || !_controller) return; 
 
         input.Set(_controller.GetLocalInputs());

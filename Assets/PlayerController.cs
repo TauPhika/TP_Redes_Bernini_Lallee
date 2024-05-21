@@ -41,12 +41,12 @@ public class PlayerController : MonoBehaviour
 
     public NetworkInputData GetLocalInputs()
     {
+        print("se llama el struct");
+        
         _netInputs.isJumpPressed = _isJumpPressed; _isJumpPressed = false;
         _netInputs.isDashPressed = _isDashPressed; _isDashPressed = false;
         _netInputs.isJetpackPressed = _isJetpackPressed; _isJetpackPressed = false;
         _netInputs.isFirePressed = _isFirePressed; _isFirePressed = false;
-
-        print(_isJumpPressed);
 
         return _netInputs;
     }

@@ -46,6 +46,11 @@ public class PlayerModel : NetworkBehaviour
         if (/*Physics.Raycast(ray, 0.5f) &&*/ collision.gameObject.layer == 6) isAirborne = false;
     }
 
+    private void Awake()
+    {
+        local = this;
+    }
+
     public override void Spawned()
     {
         if (Object.HasInputAuthority) local = this;
@@ -65,13 +70,13 @@ public class PlayerModel : NetworkBehaviour
         ray = new Ray(transform.position, Vector3.down);
     }
 
-    public void Update()
+    public override void FixedUpdateNetwork()
     {
         if (!_dying)
         {
-            var move = controller.Move();
+            //var move = controller.Move();
 
-            //if (_netInputs.movementX != 0 || _netInputs.isJetpackPressed || _netInputs.movementY != 0) controller.Move();
+            if (_netInputs.movementX != 0 || _netInputs.isJetpackPressed || _netInputs.movementY != 0) controller.Move();
 
             //if (_netInputs.isJumpPressed && !isAirborne) controller.Jump(jumpHeight);
 
