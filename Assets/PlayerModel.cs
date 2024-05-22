@@ -74,6 +74,14 @@ public class PlayerModel : NetworkBehaviour
         //PlayerSpawner.instance.allPlayers.Add(this);
         //allPlayers = PlayerSpawner.instance.allPlayers;
 
+        view.mySprite.material.color = Color.cyan;
+        var otherPlayer = FindObjectsOfType<PlayerModel>();
+        foreach (var p in otherPlayer)
+        {
+            if (p != this) view.mySprite.material.color = Color.red;
+        }
+        view.originalColor = view.mySprite.material.color;
+
         _dying = false;
 
         if (!limitDashing)
@@ -83,7 +91,9 @@ public class PlayerModel : NetworkBehaviour
         }
 
         _health = maxHealth;
+
         view = GetComponent<PlayerView>();
+
         controller = GetComponent<PlayerController>();
         controller._netInputs.waiting = true;
 

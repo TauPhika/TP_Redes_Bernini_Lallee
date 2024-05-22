@@ -30,14 +30,14 @@ public class PlayerView : MonoBehaviour
     [Range(1, 5)]
     public int feedbackLength = 3;
     [ReadOnly] public Color originalColor;
+    public List<Color> playerColors;
     #endregion
 
-    void Start()
+    void Awake()
     {
         model = gameObject.GetComponent<PlayerModel>();
 
         mySprite = gameObject.GetComponent<SpriteRenderer>();
-        originalColor = mySprite.material.color;
 
     }
 

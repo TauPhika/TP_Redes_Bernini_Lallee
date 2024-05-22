@@ -30,7 +30,7 @@ public class PlayerWeapon : MonoBehaviour
         _model = gameObject.GetComponent<PlayerModel>();
 
         reloadText = Instantiate(new GameObject(), 
-                                _model.gameObject.transform.position + new Vector3(4.1f, -0.1f, 0),
+                                _model.gameObject.transform.position + new Vector3(2.75f, -0.1f, 0),
                                 Quaternion.identity, 
                                 _model.gameObject.transform).
                                 AddComponent<TextMeshPro>();
@@ -40,7 +40,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4.1f, -0.1f, 0);
+        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(2.75f, -0.1f, 0);
         reloadText.transform.rotation = Quaternion.identity;
     }
 

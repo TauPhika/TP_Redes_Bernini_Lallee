@@ -53,6 +53,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
                 {
                     Destroy(player.myWaitingCanvas);
                     player.controller._netInputs.waiting = false;
+
                 }
             }
         }

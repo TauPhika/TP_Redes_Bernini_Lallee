@@ -158,7 +158,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region DASH
-    float doubleTapSpeed = 0.5f;
+    float doubleTapSpeed = 0.25f;
     bool pressedAFirstTime = false;
     bool pressedDFirstTime = false;
     float lastPressedTime;
