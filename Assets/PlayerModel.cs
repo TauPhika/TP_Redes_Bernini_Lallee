@@ -5,6 +5,7 @@ using Fusion;
 using System;
 using TMPro;
 
+
 public class PlayerModel : NetworkBehaviour
 {
     #region VARIABLES
@@ -50,6 +51,8 @@ public class PlayerModel : NetworkBehaviour
     public event Action<float> OnLifeUpdate = delegate { };
     public event Action OnPlayerDespawn = delegate { };
     #endregion
+
+    
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -159,7 +162,7 @@ public class PlayerModel : NetworkBehaviour
     IEnumerator DeathFeedback()
     {
         _dying = true;
-        view.mySprite.material.color = view.deathColor;
+        view.mySprite.material.color = view.deathColor;       
         yield return new WaitForSeconds(1f / view.feedbackSpeed);
         GameOver(false);
         print("PERDISTE");
