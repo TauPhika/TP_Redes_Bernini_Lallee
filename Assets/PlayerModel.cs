@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using System;
+using TMPro;
 
 public class PlayerModel : NetworkBehaviour
 {
@@ -16,9 +17,10 @@ public class PlayerModel : NetworkBehaviour
         
     [Header("HEALTH")]
     public int maxHealth;
-    //[Networked(OnChanged = nameof(OnLifeUpdate))]
+    [Networked(OnChanged = nameof(OnLifeChanged))]
     int _health { get; set; }
     [ReadOnly] public bool _dying = false;
+    public TextMeshPro healthText { get; set; } = default;
 
     [Header("MOVEMENT")]
     public int speed;
@@ -38,6 +40,9 @@ public class PlayerModel : NetworkBehaviour
     [ReadOnly] public bool isRechargingJetpack;
 
     NetworkInputData _netInputs;
+    [ReadOnly] public GameObject myWaitingCanvas;
+    [ReadOnly] public TextMeshProUGUI myWaitingText;
+    [ReadOnly] public List<PlayerModel> allPlayers;
 
     Ray ray;
     RaycastHit hit;
@@ -60,6 +65,12 @@ public class PlayerModel : NetworkBehaviour
     {
         if (Object.HasInputAuthority) local = this;
 
+        myWaitingCanvas = Instantiate(PlayerSpawner.instance.waitingCanvas.gameObject);
+        myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        PlayerSpawner.instance.waitingCanvas.gameObject.SetActive(false);
+        //PlayerSpawner.instance.allPlayers.Add(this);
+        //allPlayers = PlayerSpawner.instance.allPlayers;
+
         _dying = false;
 
         if (!limitDashing)
@@ -71,7 +82,10 @@ public class PlayerModel : NetworkBehaviour
         _health = maxHealth;
         view = GetComponent<PlayerView>();
         controller = GetComponent<PlayerController>();
+        controller._netInputs.waiting = true;
 
+
+        healthText = gameObject.GetComponentInChildren<TextMeshPro>();
         ray = new Ray(transform.position, Vector3.down);
     }
 
@@ -79,6 +93,8 @@ public class PlayerModel : NetworkBehaviour
     {
         if (!_dying && GetInput(out _netInputs))
         {
+            if (!controller._netInputs.waiting) view.BuildUI();
+            
             controller.Move();
 
             if (_netInputs.isJumpPressed && !isAirborne) controller.Jump(jumpHeight);
@@ -89,36 +105,36 @@ public class PlayerModel : NetworkBehaviour
 
             if (_netInputs.isFirePressed && !weapon._isFiring) weapon.Fire();
 
-            if(_netInputs.isDashPressed) controller.CheckForDash(dashForce);
+            if(_netInputs.isDashPressed) StartCoroutine(controller.Dash(controller.dashDir, dashForce));
+
+            //healthText.text = _health.ToString();
         }
 
         //print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
     }
 
-    public float GetHealth(int healthChange = default) => RPC_GetHealth(healthChange);
+    public float GetHealth(int healthChange = default) { RPC_GetHealth(healthChange); return _health; }
 
     // Modifica la salud en base al valor recibido, da el feedback correspondiente y devuelve el resultado final.
-    //[Rpc(RpcSources.All, RpcTargets.StateAuthority)]
-    public float RPC_GetHealth(int healthChange = default) 
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_GetHealth(int healthChange = default) 
     {
         if (healthChange != default) 
         {
             _health += healthChange;
             if (_health > maxHealth) _health = maxHealth;
-            view.UpdateHealthBar();
+            view.UpdateHealthBar(this);
 
             if (healthChange < 0 && _health > 0) StartCoroutine(DamageFeedback());
+
             else if(healthChange > 0) StartCoroutine(HealingFeedback());
         }
 
         if (_health <= 0) StartCoroutine(DeathFeedback());
-
-        float health = _health;
-        return health; 
     }
 
     #region FEEDBACKS
-    IEnumerator DamageFeedback()
+    public IEnumerator DamageFeedback()
     {
         for (int i = 0; i < view.feedbackLength; i++)
         {
@@ -145,8 +161,20 @@ public class PlayerModel : NetworkBehaviour
         _dying = true;
         view.mySprite.material.color = view.deathColor;
         yield return new WaitForSeconds(1f / view.feedbackSpeed);
-        Runner.Despawn(this.Object);
+        GameOver(false);
         print("PERDISTE");
+    }
+
+    public void GameOver(bool won) => RPC_GameOver(won);
+
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void RPC_GameOver(bool won)
+    {
+        myWaitingCanvas = Runner.Spawn(PlayerSpawner.instance.waitingCanvas).gameObject;
+        myWaitingCanvas.SetActive(true);
+        myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        if (won) myWaitingText.text = "Congratulations, you won!"; else myWaitingText.text = "You lost. Game Over.";
+        Runner.Despawn(this.Object);
     }
     #endregion
 

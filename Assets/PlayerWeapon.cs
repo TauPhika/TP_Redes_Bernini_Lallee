@@ -7,7 +7,7 @@ using Fusion;
 public class PlayerWeapon : MonoBehaviour
 {
     #region VARIABLES
-    PlayerModel _model;
+    [ReadOnly] public PlayerModel _model;
 
     [Header("BULLET")]
     public GameObject bulletPrefab;
@@ -30,7 +30,7 @@ public class PlayerWeapon : MonoBehaviour
         _model = gameObject.GetComponent<PlayerModel>();
 
         reloadText = Instantiate(new GameObject(), 
-                                _model.gameObject.transform.position + new Vector3(4.1f, -0.4f, 0),
+                                _model.gameObject.transform.position + new Vector3(4.1f, -0.1f, 0),
                                 Quaternion.identity, 
                                 _model.gameObject.transform).
                                 AddComponent<TextMeshPro>();
@@ -40,7 +40,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4.1f, -0.4f, 0);
+        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4.1f, -0.1f, 0);
         reloadText.transform.rotation = Quaternion.identity;
     }
 

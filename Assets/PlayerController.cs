@@ -16,15 +16,18 @@ public class PlayerController : MonoBehaviour
     private Vector3 target;
     [ReadOnly] public Camera cam;
 
-    NetworkInputData _netInputs;
+    [ReadOnly] public NetworkInputData _netInputs;
     bool _isJumpPressed;
     bool _isJetpackPressed;
     [ReadOnly] public bool _isFirePressed;
     bool _isDashPressed;
+    bool _waiting = true;
+    [ReadOnly] public Vector3 dashDir;
     #endregion
 
     private void Awake()
     {
+        _netInputs.waiting = _waiting;
         cam = FindObjectOfType<Camera>();
         _netInputs = new NetworkInputData();
     }
@@ -41,12 +44,14 @@ public class PlayerController : MonoBehaviour
             _isJumpPressed = true;
         }
         if (weapon.FiringInput()) _isFirePressed = true;
+
+        var dir = CheckForDash(model.dashForce);
+
+        if(dir != default) { dashDir = dir; _isDashPressed = true; }
     }
 
     public NetworkInputData GetLocalInputs()
     {
-        print("se llama el struct");
-        
         _netInputs.isJumpPressed = _isJumpPressed; _isJumpPressed = false;
         _netInputs.isDashPressed = _isDashPressed; _isDashPressed = false;
         _netInputs.isJetpackPressed = _isJetpackPressed; _isJetpackPressed = false;
@@ -154,55 +159,78 @@ public class PlayerController : MonoBehaviour
 
     #region DASH
     float doubleTapSpeed = 0.5f;
-    bool pressedFirstTime = false;
+    bool pressedAFirstTime = false;
+    bool pressedDFirstTime = false;
     float lastPressedTime;
 
-    public void CheckForDash(int force)
+    public Vector3 CheckForDash(int force)
     {
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.A))
+        Vector3 d = default;
+        
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            Vector3 dir;
-
-            if (Input.GetKeyDown(KeyCode.D)) dir = Vector3.right;
-            else dir = Vector3.left;
-
-            if (pressedFirstTime) // Chequeamos si el boton ya se presiono una vez
+            if (pressedDFirstTime) // Chequeamos si el boton ya se presiono una vez
             {
                 // Esto es cierto si presionamos dos veces dentro del tiempo determinado
-                bool isDoublePress = Time.time - lastPressedTime <= doubleTapSpeed;
+                bool isDoublePress = Time.fixedTime - lastPressedTime <= doubleTapSpeed;
 
                 if (isDoublePress)
                 {
-                    if (!model.hasDashed) { _isDashPressed = true; StartCoroutine(Dash(dir, force));}
-                    pressedFirstTime = false;
+                    if (!model.hasDashed) { d = Vector3.right;}
+                    pressedDFirstTime = false;
                 }
 
             }
             else // Y, si no se presiono una vez...
             {
-                pressedFirstTime = true; // ...entonces esta es la primera vez
+                pressedDFirstTime = true; // ...entonces esta es la primera vez
             }
 
-            lastPressedTime = Time.time;
+            lastPressedTime = Time.fixedTime;
+           
         }
-
-
-        if (pressedFirstTime && Time.time - lastPressedTime > doubleTapSpeed)
+        else if(Input.GetKeyDown(KeyCode.A))
         {
-            // Si presionamos una vez pero despues no volvemos a hacerlo, nos olvidamos de esa primera vez.
-            pressedFirstTime = false;
+            if (pressedAFirstTime) // Lo mismo pero con A
+            {
+                bool isDoublePress = Time.fixedTime - lastPressedTime <= doubleTapSpeed;
+
+                if (isDoublePress)
+                {
+                    if (!model.hasDashed) { d = Vector3.left; }
+                    pressedAFirstTime = false;
+                }
+
+            }
+            else
+            {
+                pressedAFirstTime = true;
+            }
+
+            lastPressedTime = Time.fixedTime;
+
         }
 
 
+        if (pressedAFirstTime && Time.fixedTime - lastPressedTime > doubleTapSpeed)
+        {
+            pressedAFirstTime = false;
+        }
+
+        return d;
     }
 
     public IEnumerator Dash(Vector3 dir, float force)
     {
+        print("dasheando");
+        
         model.hasDashed = true;
         model.playerRB.Rigidbody.AddForce(dir * force, ForceMode2D.Impulse);
         model.view.UpdateDashImage(false);
 
         yield return new WaitForSeconds(model.dashCooldown);
+
+        print("dasheandon't");
 
         model.hasDashed = false;
         model.view.UpdateDashImage(true);

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
+using TMPro;
+using System.Linq;
 
 public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -11,49 +13,57 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public PlayerModel player;
     public NetworkRunner runner;
     PlayerController _controller;
-    public GameObject waitingCanvas;
+    public NetworkObject waitingCanvas;
+    public TextMeshProUGUI waitingText;
 
     public GameObject[] spawningPoints;
-    [ReadOnly] public List<PlayerModel> allPlayers = new();
+    [Networked] public /*static*/ List<PlayerModel> allPlayers { get; set; } = new();
 
     private void Awake()
     {
-        instance = this;
-        waitingCanvas = Instantiate(waitingCanvas);
-    }
+        if(!instance) instance = this;
+        if(!waitingCanvas.gameObject.activeInHierarchy) waitingCanvas = Instantiate(waitingCanvas);
+        waitingText = waitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        waitingText.text = "Connecting to the servers...";
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F1) && allPlayers.Count < 4)
-        {
-            
-        }
     }
 
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        print("se conecto");
 
-        if(runner.Topology == SimulationConfig.Topologies.Shared)
+        if(runner.Topology == SimulationConfig.Topologies.Shared && allPlayers.Count < 3)
         {
-            waitingCanvas.SetActive(false);
-
             var localPlayer = runner.Spawn(player,
                                            spawningPoints[Random.Range(0, spawningPoints.Length)].transform.position,
                                            Quaternion.identity,
-                                           runner.LocalPlayer);
+                                           runner.LocalPlayer);             
 
             _controller = localPlayer.GetComponent<PlayerController>();
 
             allPlayers.Add(localPlayer);
+            allPlayers.Add(localPlayer);
+
+            print($"Player {allPlayers.Count} has connected.");
+
+            localPlayer.myWaitingText.text = "Successfully connected. Waiting for another player...";
+
+            if (allPlayers.Count == 2)
+            {
+                foreach (var player in allPlayers)
+                {
+                    Destroy(player.myWaitingCanvas);
+                    player.controller._netInputs.waiting = false;
+                }
+            }
+        }
+        else if(allPlayers.Count >= 3)
+        {
+            waitingText.text = "Connection failed. The lobby is already full.";
         }
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        print("input");
-
         if (!PlayerModel.local || !_controller) return; 
 
         input.Set(_controller.GetLocalInputs());
