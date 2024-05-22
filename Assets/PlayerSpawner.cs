@@ -88,7 +88,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
-
+        Application.Quit();
     }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
@@ -109,7 +109,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-
+        Application.Quit();
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, System.ArraySegment<byte> data)
@@ -134,7 +134,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-
+        Application.Quit();
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)

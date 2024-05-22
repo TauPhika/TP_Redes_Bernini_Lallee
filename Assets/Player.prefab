@@ -511,7 +511,7 @@ MonoBehaviour:
   bulletsPerMinute: 60
   reloadText: {fileID: 0}
   fullAuto: 0
-  canHurtItself: 1
+  canHurtItself: 0
   _isFiring: 0
 --- !u!114 &1894703109611141026
 MonoBehaviour:
@@ -525,7 +525,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 518e39b746cdcc242bac42ae64536ba5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBarAsset: {fileID: 3896851458296691998, guid: 225987851486c63429596f9a7f8db30c, type: 3}
   jetpackBarAsset: {fileID: 4457058122622047553, guid: 8238b7c2f96be4f4aa0f7a670596670a, type: 3}
   dashAsset: {fileID: 7785217544195840232, guid: 74cffd7a0e6676344a3eb16004901062, type: 3}
   textAsset: {fileID: 3312263400818837461, guid: e7c50e4c7a5c1d74f9f356c742ff14bc, type: 3}

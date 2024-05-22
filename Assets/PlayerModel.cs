@@ -187,6 +187,7 @@ public class PlayerModel : NetworkBehaviour
         myWaitingCanvas.SetActive(true);
         myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
         if (won) myWaitingText.text = "Congratulations, you won!"; else myWaitingText.text = "You lost. Game Over.";
+        Instantiate(myWaitingCanvas);
         Runner.Despawn(this.Object);
     }
     #endregion

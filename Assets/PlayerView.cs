@@ -11,7 +11,7 @@ public class PlayerView : MonoBehaviour
     PlayerModel model;
 
     [Header("CANVAS")]
-    public GameObject healthBarAsset;
+    //public GameObject healthBarAsset;
     public GameObject jetpackBarAsset;
     public GameObject dashAsset;
     public GameObject textAsset;
@@ -64,7 +64,7 @@ public class PlayerView : MonoBehaviour
     
     void CreateHealthBar()
     {
-        healthBar = Instantiate(healthBarAsset, canvas.transform).GetComponent<Image>();
+        //healthBar = Instantiate(healthBarAsset, canvas.transform).GetComponent<Image>();
     }
 
 
@@ -89,7 +89,7 @@ public class PlayerView : MonoBehaviour
     public void UpdateHealthBar(PlayerModel model)
     {
         var health = model.GetHealth();
-        healthBar.fillAmount = health / model.maxHealth;
+        //healthBar.fillAmount = health / model.maxHealth;
         model.healthText.text = health.ToString();
         print($"Player health: {health}");
     }
