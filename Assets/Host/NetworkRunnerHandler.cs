@@ -16,13 +16,67 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     public event Action<List<SessionInfo>> OnSessionListUpdate = delegate { };
 
     #region LOBBY
-    void JoinLobby()
+    public void JoinLobby()
     {
+        if (_currentNetwork) Destroy(_currentNetwork); 
+        _currentNetwork = Instantiate(_networkPrefab);
 
+        _currentNetwork.AddCallbacks(this);
+
+        var clientTask = JoinLobbyTask();
     }
+
+    async Task JoinLobbyTask()
+    {
+        var result = await _currentNetwork.JoinSessionLobby(SessionLobby.Custom, "Main Lobby");
+
+        if (result.Ok) OnLobbyConnected(); else print("Malio sal");
+    }
+
     #endregion
 
     #region SESSION MANAGEMENT
+
+    public void HostSession(string sessionName, string sceneName)
+    {
+        var clientTask = InitializeGame(gameMode : GameMode.Host, 
+                                        gameName : sessionName, 
+                                        sceneToLoad : SceneUtility.GetBuildIndexByScenePath($"Scenes/{sceneName}"));
+    }
+    
+    public void JoinSession(SessionInfo session)
+    {
+        var clientTask = InitializeGame(gameMode : GameMode.Client, 
+                                        gameName : session.Name);
+    }
+
+    async Task InitializeGame(GameMode gameMode, string gameName = "New session", SceneRef? sceneToLoad = null)
+    {
+        var sceneManager = _currentNetwork.GetComponent<NetworkSceneManagerDefault>();
+
+        _currentNetwork.ProvideInput = true;
+
+        var gameArgs = new StartGameArgs()
+        {
+            GameMode = gameMode,
+            Scene = sceneToLoad,
+            SessionName = gameName,
+            CustomLobbyName = "Main Lobby",
+            SceneManager = sceneManager
+        };
+
+        var result = await _currentNetwork.StartGame(gameArgs);
+
+        if (result.Ok)
+            if (gameArgs.GameMode == GameMode.Host) print($"Created new {gameName} in {gameArgs.CustomLobbyName} successfully.");
+            else print($"Joined {gameName} in {gameArgs.CustomLobbyName} successfully.");
+    }
+
+
+    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
+    {
+        OnSessionListUpdate(sessionList);
+    }
 
     #endregion
 
@@ -38,10 +92,6 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     }
 
-    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
-    {
-        throw new NotImplementedException();
-    }
 
 
     #region CALLBACKS
