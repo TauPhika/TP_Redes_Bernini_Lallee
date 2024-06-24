@@ -1,32 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Fusion;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     #region VARIABLES
     public PlayerModel model;
     public PlayerWeapon weapon;
     [ReadOnly] public float _jetpackDuration;
 
-    float _movementX;
-    float _movementY;
-    bool _isJumpPressed;
-    bool _isDashPressed;
-    bool _isJetpackPressed;
-    bool _isRechargingJetpack;
     [ReadOnly] public float _timeOnGround = 0;
 
     private Vector3 target;
     [ReadOnly] public Camera cam;
 
-    NetworkInputData _inputData;
+    NetworkInputData _localInputs;
     #endregion
 
     private void Awake()
     {
         cam = FindObjectOfType<Camera>();
-        _inputData = new NetworkInputData();
+        _localInputs = new NetworkInputData();
     }
 
     private void Start()
@@ -34,54 +29,24 @@ public class PlayerController : MonoBehaviour
         _jetpackDuration = model.jetpackDuration;
     }
 
-    void Update()
+    public override void FixedUpdateNetwork()
     {
-        if (!model._dying)
-        {
+        if (!GetInput(out _localInputs)) return;
 
-            model.transform.position += new Vector3(GetMovementX(model.speed),
-                                                    GetMovementY(model.jumpHeight, model.jetpackPower),
-                                                    0) * Time.deltaTime;
 
-            model.transform.rotation = GetAimingRotation();
-
-            if (weapon.FiringInput() && !weapon._isFiring)
-            {
-                StartCoroutine(weapon.FireWeapon());
-            }
-
-            CheckForDash(model.dashForce);
-        }
-    }
-
-    public NetworkInputData GetLocalInputs()
-    {
-        _inputData.movementX = _movementX;
-        _inputData.movementY = _movementY;
-        _inputData.isAirborne = model.isAirborne;
-        _inputData.isDashPressed = _isDashPressed;
-        _inputData.isJetpackPressed = _isJetpackPressed;
-        _inputData.isJumpPressed = _isJumpPressed;
-        _inputData.isFirePressed = weapon.FiringInput();
-        _inputData.isFiring = weapon._isFiring;
-        _inputData.isRechargingJetpack = model.isRechargingJetpack;
-
-        _isDashPressed = _isJetpackPressed = _isJumpPressed = false;
-
-        return _inputData;
     }
 
     #region MOVEMENT
 
     // Devuelve el movimiento normal en x
-    float GetMovementX(float speed)
+    public float GetMovementX(float speed)
     {
         _movementX = Input.GetAxis("Horizontal") * speed;
         return _movementX;
     }
 
     // Devuelve el movimiento en Y, incluyendo salto y jetpack.
-    float GetMovementY(float height, float power)
+    public float GetMovementY(float height, float power)
     {
         if (Input.GetKeyDown(KeyCode.Space) && !model.isAirborne)
         {
@@ -102,7 +67,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // Devuelve la rotacion en base a la posicion del mouse
-    Quaternion GetAimingRotation()
+    public Quaternion GetAimingRotation()
     {
         target = cam.ScreenToWorldPoint(Input.mousePosition);
 
@@ -160,7 +125,7 @@ public class PlayerController : MonoBehaviour
     bool pressedFirstTime = false;
     float lastPressedTime;
 
-    void CheckForDash(int force)
+    public void CheckForDash(int force)
     {
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.A))
         {
@@ -173,7 +138,7 @@ public class PlayerController : MonoBehaviour
             {
                 // Esto es cierto si presionamos dos veces dentro del tiempo determinado
                 bool isDoublePress = Time.time - lastPressedTime <= doubleTapSpeed;
-              
+
                 if (isDoublePress)
                 {
                     if (!model.hasDashed) { _isDashPressed = true; StartCoroutine(Dash(dir, force)); }
@@ -188,7 +153,7 @@ public class PlayerController : MonoBehaviour
 
             lastPressedTime = Time.time;
         }
-   
+
 
         if (pressedFirstTime && Time.time - lastPressedTime > doubleTapSpeed)
         {
@@ -210,5 +175,7 @@ public class PlayerController : MonoBehaviour
         model.hasDashed = false;
         model.view.UpdateDashImage(true);
     }
+
     #endregion
+
 }

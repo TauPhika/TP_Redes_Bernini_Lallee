@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerModel : MonoBehaviour
+public class PlayerModel : NetworkCharacterControllerPrototype
 {
     #region VARIABLES
     public PlayerView view;
