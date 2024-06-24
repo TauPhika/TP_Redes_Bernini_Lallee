@@ -11,15 +11,22 @@ public class PlayerController : MonoBehaviour
 
     float _movementX;
     float _movementY;
+    bool _isJumpPressed;
+    bool _isDashPressed;
+    bool _isJetpackPressed;
+    bool _isRechargingJetpack;
     [ReadOnly] public float _timeOnGround = 0;
 
     private Vector3 target;
     [ReadOnly] public Camera cam;
+
+    NetworkInputData _inputData;
     #endregion
 
     private void Awake()
     {
         cam = FindObjectOfType<Camera>();
+        _inputData = new NetworkInputData();
     }
 
     private void Start()
@@ -47,8 +54,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public NetworkInputData GetLocalInputs()
+    {
+        _inputData.movementX = _movementX;
+        _inputData.movementY = _movementY;
+        _inputData.isAirborne = model.isAirborne;
+        _inputData.isDashPressed = _isDashPressed;
+        _inputData.isJetpackPressed = _isJetpackPressed;
+        _inputData.isJumpPressed = _isJumpPressed;
+        _inputData.isFirePressed = weapon.FiringInput();
+        _inputData.isFiring = weapon._isFiring;
+        _inputData.isRechargingJetpack = model.isRechargingJetpack;
+
+        _isDashPressed = _isJetpackPressed = _isJumpPressed = false;
+
+        return _inputData;
+    }
+
     #region MOVEMENT
-    
+
     // Devuelve el movimiento normal en x
     float GetMovementX(float speed)
     {
@@ -63,6 +87,7 @@ public class PlayerController : MonoBehaviour
         {
             model.playerRB.AddForce(Vector3.up * height, ForceMode2D.Impulse);
             model.isAirborne = true;
+            _isJumpPressed = true;
         }
 
         if (model.isAirborne)
@@ -94,6 +119,8 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetAxis("Vertical") != 0)
         {
+            _isJetpackPressed = true;
+
             if (_jetpackDuration > 0)
             {
                 _jetpackDuration -= Time.deltaTime;
@@ -149,7 +176,7 @@ public class PlayerController : MonoBehaviour
               
                 if (isDoublePress)
                 {
-                    if(!model.hasDashed) StartCoroutine(Dash(dir, force));
+                    if (!model.hasDashed) { _isDashPressed = true; StartCoroutine(Dash(dir, force)); }
                     pressedFirstTime = false;
                 }
 
