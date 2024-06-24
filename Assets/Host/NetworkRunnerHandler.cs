@@ -18,7 +18,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     #region LOBBY
     public void JoinLobby()
     {
-        if (_currentNetwork) Destroy(_currentNetwork); 
+        if (_currentNetwork) Destroy(_currentNetwork);
         _currentNetwork = Instantiate(_networkPrefab);
 
         _currentNetwork.AddCallbacks(this);
@@ -39,8 +39,8 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void HostSession(string sessionName, string sceneName)
     {
-        var clientTask = InitializeGame(gameMode : GameMode.Host, 
-                                        gameName : sessionName, 
+        var clientTask = InitializeGame(gameMode: GameMode.Host,
+                                        gameName: sessionName,
                                         sceneToLoad : SceneUtility.GetBuildIndexByScenePath($"Scenes/{sceneName}"));
     }
     
@@ -55,21 +55,27 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
         var sceneManager = _currentNetwork.GetComponent<NetworkSceneManagerDefault>();
 
         _currentNetwork.ProvideInput = true;
-
+        
         var gameArgs = new StartGameArgs()
         {
             GameMode = gameMode,
-            Scene = sceneToLoad,
             SessionName = gameName,
+            Scene = sceneToLoad,
             CustomLobbyName = "Main Lobby",
-            SceneManager = sceneManager
+            SceneManager = sceneManager,
+            PlayerCount = 4
         };
+
+        if(gameName != "New session" && sceneToLoad != null) print("Initializing...");
 
         var result = await _currentNetwork.StartGame(gameArgs);
 
         if (result.Ok)
+        {
             if (gameArgs.GameMode == GameMode.Host) print($"Created new {gameName} in {gameArgs.CustomLobbyName} successfully.");
             else print($"Joined {gameName} in {gameArgs.CustomLobbyName} successfully.");
+        }
+        else print("nop");
     }
 
 
@@ -79,20 +85,6 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     }
 
     #endregion
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-
 
     #region CALLBACKS
     public void OnConnectedToServer(NetworkRunner runner)
@@ -162,7 +154,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        throw new NotImplementedException();
+        print("shutting down");
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
