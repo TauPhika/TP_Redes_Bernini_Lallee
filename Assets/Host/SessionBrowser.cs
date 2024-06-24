@@ -49,7 +49,7 @@ public class SessionBrowser : MonoBehaviour
 
     void AddNewSessionItem(SessionInfo session)
     {
-        var newItem = Instantiate(_sessionItem);
+        var newItem = Instantiate(_sessionItem, _parent.transform);
         newItem.SetInfo(session, JoinSelectedSession);
     }
 

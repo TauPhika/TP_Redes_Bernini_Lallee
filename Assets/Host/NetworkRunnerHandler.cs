@@ -46,6 +46,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     
     public void JoinSession(SessionInfo session)
     {
+        print("Uniendose");
         var clientTask = InitializeGame(gameMode : GameMode.Client, 
                                         gameName : session.Name);
     }
@@ -62,8 +63,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
             SessionName = gameName,
             Scene = sceneToLoad,
             CustomLobbyName = "Main Lobby",
-            SceneManager = sceneManager,
-            PlayerCount = 4
+            SceneManager = sceneManager
         };
 
         if(gameName != "New session" && sceneToLoad != null) print("Initializing...");
@@ -89,67 +89,67 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     #region CALLBACKS
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        throw new NotImplementedException();
+        print("Successfully joined the game.");
     }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
-        throw new NotImplementedException();
+        print("Failed to join the game.");
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        throw new NotImplementedException();
+        print("A new player is trying to join.");
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnSceneLoadDone(NetworkRunner runner)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnSceneLoadStart(NetworkRunner runner)
     {
-        throw new NotImplementedException();
+
     }
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
@@ -159,7 +159,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
     {
-        throw new NotImplementedException();
+
     }
     #endregion
 }
