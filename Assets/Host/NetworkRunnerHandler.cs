@@ -63,7 +63,8 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
             SessionName = gameName,
             Scene = sceneToLoad,
             CustomLobbyName = "Main Lobby",
-            SceneManager = sceneManager
+            SceneManager = sceneManager,
+            PlayerCount = 4
         };
 
         if(gameName != "New session" && sceneToLoad != null) print("Initializing...");
