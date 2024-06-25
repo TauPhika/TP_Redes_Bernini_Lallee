@@ -94,7 +94,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     #region CALLBACKS
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        print("Successfully joined the game.");
+        print("Successfully connected to the game.");
     }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)

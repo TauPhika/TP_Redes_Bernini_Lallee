@@ -59,11 +59,6 @@ public class PlayerModel : NetworkBehaviour
         if (/*Physics.Raycast(ray, 0.5f) &&*/ collision.gameObject.layer == 6) isAirborne = false;
     }
 
-    private void Awake()
-    {
-        local = this;
-    }
-
     public override void Spawned()
     {
         if (Object.HasInputAuthority) local = this;

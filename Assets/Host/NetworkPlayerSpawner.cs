@@ -5,6 +5,7 @@ using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using TMPro;
+using System.Linq;
 
 
 public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
@@ -14,31 +15,44 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     GameObject[] _spawningPoints;
     public GameObject waitingCanvas;
     [HideInInspector] public TextMeshProUGUI waitingText;
+    bool _waitingForPlayers = true;
 
+    private void Awake()
+    {
+        _waitingForPlayers = true;
+    }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {              
-        if (runner.IsServer)
+    {
+        if (runner.IsServer || runner.Topology == SimulationConfig.Topologies.ClientServer)
         {
-            var p = runner.Spawn(prefab : _playerPrefab, 
-                                 position : _spawningPoints[UnityEngine.Random.Range(0, _spawningPoints.Length)].transform.position,
-                                 rotation : Quaternion.identity,
-                                 inputAuthority : player);
+            var p = runner.Spawn(prefab: _playerPrefab,
+                                 position: _spawningPoints[UnityEngine.Random.Range(0, _spawningPoints.Length)].transform.position,
+                                 rotation: Quaternion.identity,
+                                 inputAuthority: player);
 
-            var blocker = GameObject.Find("ScreenBlocker");           
+            if (!p) print("no apareci");
 
-            if (!p.myWaitingCanvas) p.myWaitingCanvas = Instantiate(waitingCanvas);
-            p.myWaitingText = p.myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
-            p.myWaitingText.text = "Successfully connected. \n Waiting for another player...";
+            var blocker = GameObject.Find("ScreenBlocker");
+
+            //if (!p.myWaitingCanvas) p.myWaitingCanvas = Instantiate(waitingCanvas);
+            //p.myWaitingText = p.myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
+            //p.myWaitingText.text = "Successfully connected. \n Waiting for another player...";
 
             if (blocker) Destroy(blocker);
+
+            if (runner.ActivePlayers.Count() == 2)
+            {
+                //p.myWaitingCanvas.SetActive(false);
+                _waitingForPlayers = false;
+            }
 
         }
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (!PlayerModel.local) return;
+        if (!PlayerModel.local || _waitingForPlayers) return;
 
         if (!_localInputs) _localInputs = PlayerModel.local.GetComponent<PlayerController>();
         else input.Set(_localInputs.GetLocalInputs());
@@ -47,17 +61,17 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     #region CALLBACKS
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        print("Successfully joined the game.");
+
     }
 
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
     {
-        print("Failed to join the game.");
+
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        print("A new player is trying to join.");
+
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
@@ -82,7 +96,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-
+        print("y se marcho");
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data)
@@ -102,7 +116,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        print("shutting down");
+
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
