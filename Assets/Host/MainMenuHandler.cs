@@ -15,6 +15,7 @@ public class MainMenuHandler : MonoBehaviour
     [SerializeField] Button _hostSessionLobbyButton, _hostSessionButton;
 
     [Header("INPUT FIELD"), SerializeField] TMP_InputField _inputSessionName;
+    [SerializeField] TMP_InputField _inputNickname;
 
     [Header("TEXT"), SerializeField] TextMeshProUGUI _statusText;
     [SerializeField] TextMeshProUGUI _creatingText;
@@ -27,6 +28,7 @@ public class MainMenuHandler : MonoBehaviour
         _sessionBrowserPanel.SetActive(false);
         _hostSessionPanel.SetActive(false);
         _creatingText.gameObject.SetActive(false);
+        _inputNickname.characterLimit = 8;
 
         _joinLobbyButton.onClick.AddListener(JoinLobby);
         _hostSessionLobbyButton.onClick.AddListener(HostSessionLobby);
@@ -42,6 +44,8 @@ public class MainMenuHandler : MonoBehaviour
     void JoinLobby() 
     {
         _networkRunner.JoinLobby();
+
+        PlayerPrefs.SetString("NicknameSave", _inputNickname.text);
 
         _joinLobbyPanel.SetActive(false);
         _joiningLobbyPanel.SetActive(true);

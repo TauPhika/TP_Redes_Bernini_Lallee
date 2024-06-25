@@ -83,7 +83,6 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
         else print("nop");
     }
 
-
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
     {
         OnSessionListUpdate(sessionList);
@@ -139,7 +138,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-
+        
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data)

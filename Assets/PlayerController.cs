@@ -22,6 +22,9 @@ public class PlayerController : NetworkBehaviour
     bool _isDashPressed;
     bool _waiting = true;
     [ReadOnly] public Vector3 dashDir;
+
+    float _movementX;
+    float _movementY;
     #endregion
 
     private void Awake()
@@ -55,6 +58,7 @@ public class PlayerController : NetworkBehaviour
         _netInputs.isDashPressed = _isDashPressed; _isDashPressed = false;
         _netInputs.isJetpackPressed = _isJetpackPressed; _isJetpackPressed = false;
         _netInputs.isFirePressed = _isFirePressed; _isFirePressed = false;
+        _netInputs.movementX = _movementX; _netInputs.movementY = _movementY;
 
         return _netInputs;
     }
@@ -64,8 +68,8 @@ public class PlayerController : NetworkBehaviour
     // Devuelve el movimiento normal en x
     public float GetMovementX(float speed)
     {
-        _netInputs.movementX = Input.GetAxis("Horizontal") * speed;
-        return _netInputs.movementX;
+        _movementX = Input.GetAxis("Horizontal") * speed;
+        return _movementX;
     }
 
     // Devuelve el movimiento en Y, incluyendo salto y jetpack.
@@ -79,7 +83,7 @@ public class PlayerController : NetworkBehaviour
         else RechargeJetpack(true);
 
 
-        return _netInputs.movementY;
+        return _movementY;
     }
 
     public Vector3 Jump(float height)
@@ -125,7 +129,7 @@ public class PlayerController : NetworkBehaviour
             if (_jetpackDuration > 0)
             {
                 _jetpackDuration -= Time.fixedDeltaTime;
-                _netInputs.movementY = Input.GetAxis("Vertical") * power;
+                _movementY = Input.GetAxis("Vertical") * power;
                 yield return null;
             }
             else
@@ -150,7 +154,7 @@ public class PlayerController : NetworkBehaviour
                 _timeOnGround = 0;
             }
 
-            _netInputs.movementY = 0;
+            _movementY = 0;
         }
         else _timeOnGround = 0;
     }

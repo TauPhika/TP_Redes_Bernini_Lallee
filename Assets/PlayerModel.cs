@@ -14,14 +14,15 @@ public class PlayerModel : NetworkBehaviour
     public PlayerView view;
     public PlayerController controller;
     public PlayerWeapon weapon;
-    public NetworkRunner runner;
+    [HideInInspector] public NetworkRunner runner;
 
     [Header("HEALTH")]
     public int maxHealth;
     [Networked(OnChanged = nameof(OnLifeChanged))]
     int _health { get; set; }
     [ReadOnly] public bool _dying = false;
-    public TextMeshPro healthText { get; set; } = default;
+    public TextMeshPro healthText = default;
+    public TextMeshPro nicknameText = default;
 
     [Header("MOVEMENT")]
     public int speed;
@@ -61,7 +62,16 @@ public class PlayerModel : NetworkBehaviour
 
     public override void Spawned()
     {
-        if (Object.HasInputAuthority) local = this;
+        if (Object.HasInputAuthority) 
+        {
+            local = this;
+            print("este soy yo");
+            view.mySprite.material.color = Color.cyan;
+        }
+        else
+        {
+            view.mySprite.material.color = Color.red;
+        }
 
         //myWaitingCanvas = Instantiate(PlayerSpawner.instance.waitingCanvas.gameObject);
         //myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
@@ -70,13 +80,13 @@ public class PlayerModel : NetworkBehaviour
         //PlayerSpawner.instance.allPlayers.Add(this);
         //allPlayers = PlayerSpawner.instance.allPlayers;
 
-        view.mySprite.material.color = Color.cyan;
-        var otherPlayer = FindObjectsOfType<PlayerModel>();
-        foreach (var p in otherPlayer)
-        {
-            if (p != this) view.mySprite.material.color = Color.red;
-        }
-        view.originalColor = view.mySprite.material.color;
+        //view.mySprite.material.color = Color.cyan;
+        //var otherPlayer = FindObjectsOfType<PlayerModel>();
+        //foreach (var p in otherPlayer)
+        //{
+        //    if (p != this) view.mySprite.material.color = Color.red;
+        //}
+        //view.originalColor = view.mySprite.material.color;
 
         _dying = false;
 
@@ -87,6 +97,9 @@ public class PlayerModel : NetworkBehaviour
         }
 
         _health = maxHealth;
+        healthText = Instantiate(healthText);
+        nicknameText = Instantiate(nicknameText);
+        nicknameText.text = PlayerPrefs.GetString("NicknameSave");
 
         view = GetComponent<PlayerView>();
         view.BuildUI();
@@ -94,14 +107,26 @@ public class PlayerModel : NetworkBehaviour
         controller = GetComponent<PlayerController>();
         controller._netInputs.waiting = true;
 
-
-        healthText = gameObject.GetComponentInChildren<TextMeshPro>();
         ray = new Ray(transform.position, Vector3.down);
     }
 
     public override void Despawned(NetworkRunner runner, bool hasState)
     {
         OnPlayerDespawn();
+    }
+
+    private void Disconnect()
+    {
+        if (!Object.HasInputAuthority)
+        { 
+            runner.Disconnect(Object.InputAuthority);
+        }
+        else
+        {
+
+        }
+
+        runner.Despawn(Object);
     }
 
     public override void FixedUpdateNetwork()
@@ -190,7 +215,7 @@ public class PlayerModel : NetworkBehaviour
         myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
         if (won) myWaitingText.text = "Congratulations, you won!"; else myWaitingText.text = "You lost. Game Over.";
         Instantiate(myWaitingCanvas);
-        Runner.Despawn(this.Object);
+        Disconnect();
     }
     #endregion
 

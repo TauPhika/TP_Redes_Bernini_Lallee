@@ -10,7 +10,7 @@ public class SessionBrowser : MonoBehaviour
 {
     [SerializeField] NetworkRunnerHandler _networkRunner;
 
-    [SerializeField] TextMeshProUGUI _emptyText;
+    [SerializeField] TextMeshProUGUI _emptyText, _joiningText;
 
     [SerializeField] SessionItem _sessionItem;
 
@@ -18,6 +18,7 @@ public class SessionBrowser : MonoBehaviour
 
     private void OnEnable()
     {
+        _joiningText.gameObject.SetActive(false);
         _networkRunner.OnSessionListUpdate += ReceiveSessionList;
     }
 
@@ -55,6 +56,7 @@ public class SessionBrowser : MonoBehaviour
 
     void JoinSelectedSession(SessionInfo session)
     {
+        _joiningText.gameObject.SetActive(true);
         _networkRunner.JoinSession(session);
     }
 }

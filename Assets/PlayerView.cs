@@ -43,8 +43,10 @@ public class PlayerView : MonoBehaviour
 
     void LateUpdate()
     {
-        model.healthText.transform.position = model.gameObject.transform.position;
+        model.healthText.transform.position = model.gameObject.transform.position + Vector3.up * 0.5f;
         model.healthText.transform.rotation = Quaternion.identity;
+        model.nicknameText.transform.position = model.gameObject.transform.position + Vector3.up * 0.9f;
+        model.nicknameText.transform.rotation = Quaternion.identity;
         if (jetpackBar) UpdateJetpackBar();
     }
 
