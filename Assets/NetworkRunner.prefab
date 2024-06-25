@@ -73,5 +73,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 7558081798318744653, guid: 3b5d4b08aebdaa94daee19771ff43231, type: 3}
-  _localInputs: {fileID: 0}
-  _spawningPoints: []
+  waitingCanvas: {fileID: 9083184998924197789, guid: 91a756f9ecd29b4458d284d847875641, type: 3}
+  waitingText: {fileID: 0}

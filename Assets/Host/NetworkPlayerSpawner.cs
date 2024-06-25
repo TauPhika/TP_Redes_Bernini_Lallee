@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
+using TMPro;
 
 
 public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
@@ -11,17 +12,27 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] PlayerModel _playerPrefab;
     PlayerController _localInputs;
     GameObject[] _spawningPoints;
+    public GameObject waitingCanvas;
+    [HideInInspector] public TextMeshProUGUI waitingText;
 
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {
-              
+    {              
         if (runner.IsServer)
         {
-            runner.Spawn(prefab : _playerPrefab, 
-                         position : _spawningPoints[UnityEngine.Random.Range(0, _spawningPoints.Length)].transform.position,
-                         rotation : Quaternion.identity,
-                         inputAuthority : player);
+            var p = runner.Spawn(prefab : _playerPrefab, 
+                                 position : _spawningPoints[UnityEngine.Random.Range(0, _spawningPoints.Length)].transform.position,
+                                 rotation : Quaternion.identity,
+                                 inputAuthority : player);
+
+            var blocker = GameObject.Find("ScreenBlocker");           
+
+            if (!p.myWaitingCanvas) p.myWaitingCanvas = Instantiate(waitingCanvas);
+            p.myWaitingText = p.myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
+            p.myWaitingText.text = "Successfully connected. \n Waiting for another player...";
+
+            if (blocker) Destroy(blocker);
+
         }
     }
 

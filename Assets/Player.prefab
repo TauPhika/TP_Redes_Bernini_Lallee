@@ -425,7 +425,7 @@ MonoBehaviour:
   bulletsPerMinute: 60
   reloadText: {fileID: 5929392186818768928}
   fullAuto: 0
-  canHurtItself: 1
+  canHurtItself: 0
   _isFiring: 0
 --- !u!114 &1894703109611141026
 MonoBehaviour:

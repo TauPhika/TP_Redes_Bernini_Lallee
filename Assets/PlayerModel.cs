@@ -68,9 +68,10 @@ public class PlayerModel : NetworkBehaviour
     {
         if (Object.HasInputAuthority) local = this;
 
-        myWaitingCanvas = Instantiate(PlayerSpawner.instance.waitingCanvas.gameObject);
-        myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
-        PlayerSpawner.instance.waitingCanvas.gameObject.SetActive(false);
+        //myWaitingCanvas = Instantiate(PlayerSpawner.instance.waitingCanvas.gameObject);
+        //myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        //PlayerSpawner.instance.waitingCanvas.gameObject.SetActive(false);
+
         //PlayerSpawner.instance.allPlayers.Add(this);
         //allPlayers = PlayerSpawner.instance.allPlayers;
 

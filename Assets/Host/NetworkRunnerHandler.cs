@@ -10,7 +10,7 @@ using System;
 public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] NetworkRunner _networkPrefab;
-    public NetworkRunner runner;
+    [HideInInspector] public NetworkRunner runner;
 
     public event Action OnLobbyConnected = delegate { };
     public event Action<List<SessionInfo>> OnSessionListUpdate = delegate { };
