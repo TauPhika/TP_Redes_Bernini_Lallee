@@ -2,24 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Fusion;
 
 public class PlayerWeapon : MonoBehaviour
 {
     #region VARIABLES
-    PlayerModel _model;
+    [ReadOnly] public PlayerModel _model;
 
     [Header("BULLET")]
     public GameObject bulletPrefab;
     public Transform bulletOrigin;
     [SerializeField] private float bulletPower = 10f;
     [SerializeField] private float bulletLifeTime = 2f;
-    [Range(60,600)] public int bulletsPerMinute;
+    [Range(60, 600)] public int bulletsPerMinute;
     [SerializeField] public TextMeshPro reloadText;
 
     [Header("EXTRAS")]
     public bool fullAuto;
     public bool canHurtItself;
     [ReadOnly] public bool _isFiring;
+    [Networked(OnChanged = nameof(Fire))] public bool fire { get; set; }
     #endregion
 
     private void Awake()
@@ -27,9 +29,9 @@ public class PlayerWeapon : MonoBehaviour
         _isFiring = false;
         _model = gameObject.GetComponent<PlayerModel>();
 
-        reloadText = Instantiate(new GameObject(), 
-                                _model.gameObject.transform.position + new Vector3(4.1f, -0.4f, 0),
-                                Quaternion.identity, 
+        reloadText = Instantiate(new GameObject(),
+                                _model.gameObject.transform.position + new Vector3(2.75f, -0.1f, 0),
+                                Quaternion.identity,
                                 _model.gameObject.transform).
                                 AddComponent<TextMeshPro>();
 
@@ -38,7 +40,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4.1f, -0.4f, 0);
+        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(2.75f, -0.1f, 0);
         reloadText.transform.rotation = Quaternion.identity;
     }
 
@@ -52,15 +54,17 @@ public class PlayerWeapon : MonoBehaviour
         if (fullAuto) return Input.GetMouseButton(0); else return Input.GetMouseButtonDown(0);
     }
 
+    public void Fire() { StartCoroutine(FireWeapon()); }
+
     public IEnumerator FireWeapon()
     {
         _isFiring = true;
 
-        GameObject bullet = Instantiate(bulletPrefab, bulletOrigin.position, bulletOrigin.rotation).
+        GameObject bullet = NetworkRunnerHandler.instance.runner.Spawn(bulletPrefab, bulletOrigin.transform.position, bulletOrigin.transform.rotation).
                             GetComponent<Bullet>().SetPlayer(this);
 
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        rb.AddForce(bulletOrigin.right * bulletPower, ForceMode2D.Impulse);
+        NetworkRigidbody2D rb = bullet.GetComponent<NetworkRigidbody2D>();
+        rb.Rigidbody.AddForce(bulletOrigin.transform.right * bulletPower, ForceMode2D.Impulse);
 
         Destroy(bullet, bulletLifeTime);
 

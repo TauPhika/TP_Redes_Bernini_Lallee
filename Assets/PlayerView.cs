@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Fusion;
 
 public class PlayerView : MonoBehaviour
 {
@@ -10,14 +11,14 @@ public class PlayerView : MonoBehaviour
     PlayerModel model;
 
     [Header("CANVAS")]
-    public GameObject healthBarAsset;
+    //public GameObject healthBarAsset;
     public GameObject jetpackBarAsset;
     public GameObject dashAsset;
     public GameObject textAsset;
     public Canvas canvas;
     Image healthBar;
     Image jetpackBar;
-    TextMeshProUGUI objectiveText;
+    [ReadOnly] public TextMeshProUGUI objectiveText;
 
     [Header("MATERIAL")]
     [ReadOnly] public SpriteRenderer mySprite;
@@ -29,34 +30,42 @@ public class PlayerView : MonoBehaviour
     [Range(1, 5)]
     public int feedbackLength = 3;
     [ReadOnly] public Color originalColor;
+    public List<Color> playerColors;
     #endregion
 
-    void Start()
+    void Awake()
     {
         model = gameObject.GetComponent<PlayerModel>();
 
         mySprite = gameObject.GetComponent<SpriteRenderer>();
-        originalColor = mySprite.material.color;
 
-        if(PlayerSpawner.instance.allPlayers.Count <= 1)
+    }
+
+    void LateUpdate()
+    {
+        model.healthText.transform.position = model.gameObject.transform.position;
+        model.healthText.transform.rotation = Quaternion.identity;
+        if (jetpackBar) UpdateJetpackBar();
+    }
+
+    #region CREATORS
+    public void BuildUI()
+    {
+        if (PlayerModel.local == model && !model.controller._netInputs.waiting)
         {
             canvas = Instantiate(canvas);
             CreateObjectiveText();
             CreateDashImage();
             CreateHealthBar();
             CreateJetpackBar();
+            model.controller._netInputs.waiting = true;
         }
     }
 
-    void LateUpdate()
-    {
-        if (jetpackBar) UpdateJetpackBar();
-    }
-
-    #region CREATORS
     void CreateHealthBar()
     {
-        healthBar = Instantiate(healthBarAsset, canvas.transform).GetComponent<Image>();
+        //healthBar = Instantiate(healthBarAsset, canvas.transform).GetComponent<Image>();
+
     }
 
 
@@ -77,10 +86,13 @@ public class PlayerView : MonoBehaviour
     #endregion
 
     #region UPDATERS
-    public void UpdateHealthBar()
+    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    public void UpdateHealthBar(PlayerModel model)
     {
-        healthBar.fillAmount = model.GetHealth() / model.maxHealth;
-        print($"Player health: {model.GetHealth()}");
+        var health = model.GetHealth();
+        //healthBar.fillAmount = health / model.maxHealth;
+        model.healthText.text = health.ToString();
+        print($"Player health: {health}");
     }
 
     public void UpdateJetpackBar()
@@ -93,5 +105,6 @@ public class PlayerView : MonoBehaviour
         dashAsset.SetActive(state);
     }
     #endregion
+
 
 }

@@ -10,25 +10,29 @@ using System;
 public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] NetworkRunner _networkPrefab;
-    NetworkRunner _currentNetwork;
+    public NetworkRunner runner;
 
     public event Action OnLobbyConnected = delegate { };
     public event Action<List<SessionInfo>> OnSessionListUpdate = delegate { };
 
+    public static NetworkRunnerHandler instance;
+
+    void Awake() { instance = this; }
+
     #region LOBBY
     public void JoinLobby()
     {
-        if (_currentNetwork) Destroy(_currentNetwork);
-        _currentNetwork = Instantiate(_networkPrefab);
+        if (runner) Destroy(runner);
+        runner = Instantiate(_networkPrefab);
 
-        _currentNetwork.AddCallbacks(this);
+        runner.AddCallbacks(this);
 
         var clientTask = JoinLobbyTask();
     }
 
     async Task JoinLobbyTask()
     {
-        var result = await _currentNetwork.JoinSessionLobby(SessionLobby.Custom, "Main Lobby");
+        var result = await runner.JoinSessionLobby(SessionLobby.Custom, "Main Lobby");
 
         if (result.Ok) OnLobbyConnected(); else print("Malio sal");
     }
@@ -53,9 +57,9 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     async Task InitializeGame(GameMode gameMode, string gameName = "New session", SceneRef? sceneToLoad = null)
     {
-        var sceneManager = _currentNetwork.GetComponent<NetworkSceneManagerDefault>();
+        var sceneManager = runner.GetComponent<NetworkSceneManagerDefault>();
 
-        _currentNetwork.ProvideInput = true;
+        runner.ProvideInput = true;
         
         var gameArgs = new StartGameArgs()
         {
@@ -69,7 +73,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
         if(gameName != "New session" && sceneToLoad != null) print("Initializing...");
 
-        var result = await _currentNetwork.StartGame(gameArgs);
+        var result = await runner.StartGame(gameArgs);
 
         if (result.Ok)
         {

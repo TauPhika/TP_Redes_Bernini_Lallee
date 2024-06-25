@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Escenario
+  - SpawnPoints
   layers:
   - Default
   - TransparentFX

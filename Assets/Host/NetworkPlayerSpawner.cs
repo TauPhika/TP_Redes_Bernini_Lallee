@@ -8,13 +8,14 @@ using Fusion.Sockets;
 
 public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
-    [SerializeField] PlayerHost _playerPrefab;
-    [SerializeField] LocalPlayerInputs _localInputs;
-    [SerializeField] GameObject[] _spawningPoints;
+    [SerializeField] PlayerModel _playerPrefab;
+    PlayerController _localInputs;
+    GameObject[] _spawningPoints;
 
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+              
         if (runner.IsServer)
         {
             runner.Spawn(prefab : _playerPrefab, 
@@ -26,9 +27,9 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        if (!PlayerHost.Local) return;
+        if (!PlayerModel.local) return;
 
-        if (!_localInputs) _localInputs = PlayerHost.Local.GetComponent<LocalPlayerInputs>();
+        if (!_localInputs) _localInputs = PlayerModel.local.GetComponent<PlayerController>();
         else input.Set(_localInputs.GetLocalInputs());
     }
 
@@ -80,7 +81,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnSceneLoadDone(NetworkRunner runner)
     {
-
+        _spawningPoints = GameObject.FindGameObjectsWithTag("SpawnPoints");
     }
 
     public void OnSceneLoadStart(NetworkRunner runner)

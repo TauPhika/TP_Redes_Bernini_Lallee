@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 7563129672000102239}
   - component: {fileID: 3632688668396295144}
   - component: {fileID: -4837153277031446901}
+  - component: {fileID: -3423741446229668137}
+  - component: {fileID: -6366631740133481953}
   m_Layer: 0
   m_Name: Bala
   m_TagString: Untagged
@@ -33,7 +35,8 @@ Transform:
   m_LocalPosition: {x: -4.24, y: -4.05, z: 0.012007}
   m_LocalScale: {x: 0.13379, y: 0.13379, z: 0.13379}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2516134324028928708}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7526241215575053996
@@ -125,7 +128,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9c63bbde8b1d8f4fbef28ba3a698c64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thisPlayer: {fileID: 0}
+  _interpolationDataSource: 0
+  damage: 2
 --- !u!58 &-4837153277031446901
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -161,3 +165,87 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &-3423741446229668137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296914948875792243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectInterest: 1
+  DefaultInterestGroups: []
+  DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 1
+  AoiPositionSource: {fileID: 0}
+  Flags: 2305
+  NetworkGuid:
+    RawGuidValue: a970c76d898ac33489eb519d6c3096f9
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 3632688668396295144}
+  - {fileID: -6366631740133481953}
+  SimulationBehaviours: []
+--- !u!114 &-6366631740133481953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 296914948875792243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1779252708, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  InterpolationSpace: 0
+  InterpolationTarget: {fileID: 2516134324028928708}
+  InterpolateErrorCorrection: 1
+  InterpolatedErrorCorrectionSettings:
+    MinRate: 3.3
+    MaxRate: 10
+    PosBlendStart: 0.25
+    PosBlendEnd: 1
+    PosMinCorrection: 0.025
+    PosTeleportDistance: 2
+    RotBlendStart: 0.1
+    RotBlendEnd: 0.5
+    RotTeleportRadians: 1.5
+  UseLegacySharedModeInterpolation: 0
+  TargetInterpolationDelay: 0.03
+--- !u!1 &6342128344544924617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2516134324028928708}
+  m_Layer: 0
+  m_Name: BalaInterp
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2516134324028928708
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6342128344544924617}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6304402504120557763}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

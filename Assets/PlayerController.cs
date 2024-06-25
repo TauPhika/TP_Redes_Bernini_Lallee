@@ -15,13 +15,20 @@ public class PlayerController : NetworkBehaviour
     private Vector3 target;
     [ReadOnly] public Camera cam;
 
-    NetworkInputData _localInputs;
+    [ReadOnly] public NetworkInputData _netInputs;
+    bool _isJumpPressed;
+    bool _isJetpackPressed;
+    [ReadOnly] public bool _isFirePressed;
+    bool _isDashPressed;
+    bool _waiting = true;
+    [ReadOnly] public Vector3 dashDir;
     #endregion
 
     private void Awake()
     {
+        _netInputs.waiting = _waiting;
         cam = FindObjectOfType<Camera>();
-        _localInputs = new NetworkInputData();
+        _netInputs = new NetworkInputData();
     }
 
     private void Start()
@@ -29,11 +36,27 @@ public class PlayerController : NetworkBehaviour
         _jetpackDuration = model.jetpackDuration;
     }
 
-    public override void FixedUpdateNetwork()
+    void Update()
     {
-        if (!GetInput(out _localInputs)) return;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            _isJumpPressed = true;
+        }
+        if (weapon.FiringInput()) _isFirePressed = true;
 
+        var dir = CheckForDash(model.dashForce);
 
+        if (dir != default) { dashDir = dir; _isDashPressed = true; }
+    }
+
+    public NetworkInputData GetLocalInputs()
+    {
+        _netInputs.isJumpPressed = _isJumpPressed; _isJumpPressed = false;
+        _netInputs.isDashPressed = _isDashPressed; _isDashPressed = false;
+        _netInputs.isJetpackPressed = _isJetpackPressed; _isJetpackPressed = false;
+        _netInputs.isFirePressed = _isFirePressed; _isFirePressed = false;
+
+        return _netInputs;
     }
 
     #region MOVEMENT
@@ -41,20 +64,13 @@ public class PlayerController : NetworkBehaviour
     // Devuelve el movimiento normal en x
     public float GetMovementX(float speed)
     {
-        _movementX = Input.GetAxis("Horizontal") * speed;
-        return _movementX;
+        _netInputs.movementX = Input.GetAxis("Horizontal") * speed;
+        return _netInputs.movementX;
     }
 
     // Devuelve el movimiento en Y, incluyendo salto y jetpack.
     public float GetMovementY(float height, float power)
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !model.isAirborne)
-        {
-            model.playerRB.AddForce(Vector3.up * height, ForceMode2D.Impulse);
-            model.isAirborne = true;
-            _isJumpPressed = true;
-        }
-
         if (model.isAirborne)
         {
             StartCoroutine(UseJetpack(power));
@@ -63,7 +79,14 @@ public class PlayerController : NetworkBehaviour
         else RechargeJetpack(true);
 
 
-        return _movementY;
+        return _netInputs.movementY;
+    }
+
+    public Vector3 Jump(float height)
+    {
+        model.isAirborne = true;
+        model.playerRB.Rigidbody.AddForce(Vector3.up * height, ForceMode2D.Impulse);
+        return Vector3.up * height;
     }
 
     // Devuelve la rotacion en base a la posicion del mouse
@@ -73,7 +96,20 @@ public class PlayerController : NetworkBehaviour
 
         float radians = Mathf.Atan2(target.y - model.transform.position.y, target.x - model.transform.position.x);
         float radToDegrees = (180 / Mathf.PI) * radians;
-        return Quaternion.Euler(0, 0, radToDegrees);
+        _netInputs.rotation = Quaternion.Euler(0, 0, radToDegrees);
+        return _netInputs.rotation;
+    }
+
+
+    public Vector3 Move()
+    {
+        var move = new Vector3(GetMovementX(model.speed),
+                           GetMovementY(model.jumpHeight, model.jetpackPower),
+                           0) * Time.fixedDeltaTime;
+
+        model.transform.position += move;
+
+        return move;
     }
     #endregion
 
@@ -88,8 +124,8 @@ public class PlayerController : NetworkBehaviour
 
             if (_jetpackDuration > 0)
             {
-                _jetpackDuration -= Time.deltaTime;
-                _movementY = Input.GetAxis("Vertical") * power;
+                _jetpackDuration -= Time.fixedDeltaTime;
+                _netInputs.movementY = Input.GetAxis("Vertical") * power;
                 yield return null;
             }
             else
@@ -107,75 +143,96 @@ public class PlayerController : NetworkBehaviour
     {
         if (recharging)
         {
-            _timeOnGround += Time.deltaTime;
+            _timeOnGround += Time.fixedDeltaTime;
             if (_timeOnGround >= model.jetpackCooldownOnGround)
             {
                 _jetpackDuration = model.jetpackDuration;
                 _timeOnGround = 0;
             }
 
-            _movementY = 0;
+            _netInputs.movementY = 0;
         }
         else _timeOnGround = 0;
     }
     #endregion
 
     #region DASH
-    float doubleTapSpeed = 0.5f;
-    bool pressedFirstTime = false;
+    float doubleTapSpeed = 0.25f;
+    bool pressedAFirstTime = false;
+    bool pressedDFirstTime = false;
     float lastPressedTime;
 
-    public void CheckForDash(int force)
+    public Vector3 CheckForDash(int force)
     {
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.A))
+        Vector3 d = default;
+
+        if (Input.GetKeyDown(KeyCode.D))
         {
-            Vector3 dir;
-
-            if (Input.GetKeyDown(KeyCode.D)) dir = Vector3.right;
-            else dir = Vector3.left;
-
-            if (pressedFirstTime) // Chequeamos si el boton ya se presiono una vez
+            if (pressedDFirstTime) // Chequeamos si el boton ya se presiono una vez
             {
                 // Esto es cierto si presionamos dos veces dentro del tiempo determinado
-                bool isDoublePress = Time.time - lastPressedTime <= doubleTapSpeed;
+                bool isDoublePress = Time.fixedTime - lastPressedTime <= doubleTapSpeed;
 
                 if (isDoublePress)
                 {
-                    if (!model.hasDashed) { _isDashPressed = true; StartCoroutine(Dash(dir, force)); }
-                    pressedFirstTime = false;
+                    if (!model.hasDashed) { d = Vector3.right; }
+                    pressedDFirstTime = false;
                 }
 
             }
             else // Y, si no se presiono una vez...
             {
-                pressedFirstTime = true; // ...entonces esta es la primera vez
+                pressedDFirstTime = true; // ...entonces esta es la primera vez
             }
 
-            lastPressedTime = Time.time;
+            lastPressedTime = Time.fixedTime;
+
         }
-
-
-        if (pressedFirstTime && Time.time - lastPressedTime > doubleTapSpeed)
+        else if (Input.GetKeyDown(KeyCode.A))
         {
-            // Si presionamos una vez pero despues no volvemos a hacerlo, nos olvidamos de esa primera vez.
-            pressedFirstTime = false;
+            if (pressedAFirstTime) // Lo mismo pero con A
+            {
+                bool isDoublePress = Time.fixedTime - lastPressedTime <= doubleTapSpeed;
+
+                if (isDoublePress)
+                {
+                    if (!model.hasDashed) { d = Vector3.left; }
+                    pressedAFirstTime = false;
+                }
+
+            }
+            else
+            {
+                pressedAFirstTime = true;
+            }
+
+            lastPressedTime = Time.fixedTime;
+
         }
 
 
+        if (pressedAFirstTime && Time.fixedTime - lastPressedTime > doubleTapSpeed)
+        {
+            pressedAFirstTime = false;
+        }
+
+        return d;
     }
 
-    IEnumerator Dash(Vector3 dir, float force)
+    public IEnumerator Dash(Vector3 dir, float force)
     {
+        print("dasheando");
+
         model.hasDashed = true;
-        model.playerRB.AddForce(dir * force, ForceMode2D.Impulse);
+        model.playerRB.Rigidbody.AddForce(dir * force, ForceMode2D.Impulse);
         model.view.UpdateDashImage(false);
 
         yield return new WaitForSeconds(model.dashCooldown);
 
+        print("dasheandon't");
+
         model.hasDashed = false;
         model.view.UpdateDashImage(true);
     }
-
     #endregion
-
 }
