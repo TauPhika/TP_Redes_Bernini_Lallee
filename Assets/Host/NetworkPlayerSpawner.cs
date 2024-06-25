@@ -16,6 +16,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public GameObject waitingCanvas;
     [HideInInspector] public TextMeshProUGUI waitingText;
     bool _waitingForPlayers = true;
+    PlayerModel p;
 
     private void Awake()
     {
@@ -26,12 +27,13 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (runner.IsServer || runner.Topology == SimulationConfig.Topologies.ClientServer)
         {
-            var p = runner.Spawn(prefab: _playerPrefab,
+            p = runner.Spawn(prefab: _playerPrefab,
                                  position: _spawningPoints[UnityEngine.Random.Range(0, _spawningPoints.Length)].transform.position,
                                  rotation: Quaternion.identity,
                                  inputAuthority: player);
 
             if (!p) print("no apareci");
+            PlayerModel.local = p;
 
             var blocker = GameObject.Find("ScreenBlocker");
 
@@ -54,8 +56,8 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (!PlayerModel.local || _waitingForPlayers) return;
 
-        if (!_localInputs) _localInputs = PlayerModel.local.GetComponent<PlayerController>();
-        else input.Set(_localInputs.GetLocalInputs());
+        if (!_localInputs) _localInputs = PlayerModel.local.controller;
+        else {input.Set(_localInputs.GetLocalInputs()); print($"{PlayerModel.local.controller._netInputs.movementY} \n VS. {_localInputs._netInputs.movementY}"); }
     }
 
     #region CALLBACKS

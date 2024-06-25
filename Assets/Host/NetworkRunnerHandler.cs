@@ -17,13 +17,14 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public static NetworkRunnerHandler instance;
 
-    void Awake() { instance = this; }
+    //void Awake() { instance = this; }
 
     #region LOBBY
     public void JoinLobby()
     {
         if (runner) Destroy(runner);
         runner = Instantiate(_networkPrefab);
+        instance = runner.GetComponent<NetworkRunnerHandler>();
 
         runner.AddCallbacks(this);
 

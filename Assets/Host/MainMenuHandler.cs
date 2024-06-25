@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class MainMenuHandler : MonoBehaviour
 {
@@ -45,7 +46,7 @@ public class MainMenuHandler : MonoBehaviour
     {
         _networkRunner.JoinLobby();
 
-        PlayerPrefs.SetString("NicknameSave", _inputNickname.text);
+        PlayerPrefs.SetString($"NicknameSave", _inputNickname.text);
 
         _joinLobbyPanel.SetActive(false);
         _joiningLobbyPanel.SetActive(true);

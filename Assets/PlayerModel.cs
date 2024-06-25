@@ -4,12 +4,13 @@ using UnityEngine;
 using Fusion;
 using System;
 using TMPro;
+using System.Linq;
 
 
 public class PlayerModel : NetworkBehaviour
 {
     #region VARIABLES
-    public static PlayerModel local { get; private set; }
+    public static PlayerModel local { get; set; }
 
     public PlayerView view;
     public PlayerController controller;
@@ -51,6 +52,7 @@ public class PlayerModel : NetworkBehaviour
 
     public event Action<float> OnLifeUpdate = delegate { };
     public event Action OnPlayerDespawn = delegate { };
+
     #endregion
 
 
@@ -99,7 +101,7 @@ public class PlayerModel : NetworkBehaviour
         _health = maxHealth;
         healthText = Instantiate(healthText);
         nicknameText = Instantiate(nicknameText);
-        nicknameText.text = PlayerPrefs.GetString("NicknameSave");
+        nicknameText.text = PlayerPrefs.GetString($"NicknameSave");
 
         view = GetComponent<PlayerView>();
         view.BuildUI();
@@ -150,7 +152,7 @@ public class PlayerModel : NetworkBehaviour
             //healthText.text = _health.ToString();
         }
 
-        //print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
+        print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
     }
 
     public float GetHealth(int healthChange = default) { RPC_GetHealth(healthChange); return _health; }
