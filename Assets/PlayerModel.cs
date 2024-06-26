@@ -43,7 +43,7 @@ public class PlayerModel : NetworkBehaviour
     public float jetpackCooldownOnGround;
     [ReadOnly] public bool isRechargingJetpack;
 
-    NetworkInputData _netInputs;
+    [HideInInspector] public NetworkInputData _netInputs;
     [ReadOnly] public GameObject myWaitingCanvas;
     [ReadOnly] public TextMeshProUGUI myWaitingText;
     [ReadOnly] public List<PlayerModel> allPlayers;
@@ -118,14 +118,14 @@ public class PlayerModel : NetworkBehaviour
         OnPlayerDespawn();
     }
 
-    private void Disconnect()
+    public void Disconnect()
     {
         if (!Object.HasInputAuthority)
         { 
-            runner.Disconnect(Object.InputAuthority);
+            NetworkRunnerHandler.instance.runner.Disconnect(Object.InputAuthority);
         }
 
-        runner.Despawn(Object);
+        NetworkRunnerHandler.instance.runner.Despawn(Object);
     }
 
     public override void FixedUpdateNetwork()
@@ -157,7 +157,7 @@ public class PlayerModel : NetworkBehaviour
     public float GetHealth(int healthChange = default) { RPC_GetHealth(healthChange); return _health; }
 
     // Modifica la salud en base al valor recibido, da el feedback correspondiente y devuelve el resultado final.
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.StateAuthority, RpcTargets.InputAuthority)]
     public void RPC_GetHealth(int healthChange = default)
     {
         if (healthChange != default)
@@ -208,14 +208,14 @@ public class PlayerModel : NetworkBehaviour
 
     public void GameOver(bool won) => RPC_GameOver(won);
 
-    [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
+    [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
     public void RPC_GameOver(bool won)
     {
-        myWaitingCanvas = Runner.Spawn(myWaitingCanvas).gameObject;
+        if(!myWaitingCanvas.activeInHierarchy) myWaitingCanvas = NetworkRunnerHandler.instance.runner.Spawn(myWaitingCanvas).gameObject;
         myWaitingCanvas.SetActive(true);
         myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
         if (won) myWaitingText.text = "Congratulations, you won!"; else myWaitingText.text = "You lost. Game Over.";
-        Instantiate(myWaitingCanvas);
+        //Instantiate(myWaitingCanvas);
         Disconnect();
     }
     #endregion

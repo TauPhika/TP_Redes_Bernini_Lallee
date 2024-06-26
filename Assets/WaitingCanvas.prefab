@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 1138404566483357559}
   - component: {fileID: 7161855237318752646}
   - component: {fileID: 2023256790626612290}
+  - component: {fileID: -1863759865283945695}
   m_Layer: 5
   m_Name: WaitingCanvas
   m_TagString: Untagged
@@ -273,3 +274,26 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
+--- !u!114 &-1863759865283945695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9083184998924197789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectInterest: 1
+  DefaultInterestGroups: []
+  DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 1
+  AoiPositionSource: {fileID: 0}
+  Flags: 2305
+  NetworkGuid:
+    RawGuidValue: 91a756f9ecd29b4458d284d847875641
+  NestedObjects: []
+  NetworkedBehaviours: []
+  SimulationBehaviours: []

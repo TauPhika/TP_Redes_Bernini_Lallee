@@ -21,7 +21,7 @@ public class Bullet : NetworkBehaviour
 
             _thisPlayer._model.view.UpdateHealthBar(otherModel);
 
-            otherModel.healthText.text = (newHealth - damage).ToString();
+            otherModel.healthText.text = newHealth.ToString();
             print($"Other health: {newHealth}");
 
             StartCoroutine(otherModel.DamageFeedback());
@@ -35,6 +35,7 @@ public class Bullet : NetworkBehaviour
     public GameObject SetPlayer(PlayerWeapon player)
     {
         if (_thisPlayer == null) _thisPlayer = player;
+        print("Tengo player");
         return this.gameObject;
     }
 

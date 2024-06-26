@@ -27,43 +27,41 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (runner.IsServer)
         {
-            var p = runner.Spawn(prefab: _playerPrefab,
+            p = runner.Spawn(prefab: _playerPrefab,
                                  position: _spawningPoints[UnityEngine.Random.Range(0, _spawningPoints.Length)].transform.position,
                                  rotation: Quaternion.identity,
                                  inputAuthority: player);
 
             if (!p) print("no apareci");
+            else print(p.gameObject.transform.position);
             //PlayerModel.local = p;
 
-            var blocker = GameObject.Find("ScreenBlocker");
-
-            //if (!p.myWaitingCanvas) p.myWaitingCanvas = Instantiate(waitingCanvas);
-            //p.myWaitingText = p.myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
-            //p.myWaitingText.text = "Successfully connected. \n Waiting for another player...";
-
-            if (blocker) Destroy(blocker);
-
-
-
-            //print(p.gameObject.transform.position);
-
-            if (runner.ActivePlayers.Count() == 2)
-            {
-                //p.myWaitingCanvas.SetActive(false);
-
-                //PlayerModel.local.controller._netInputs.waiting = false;
-
-                _waitingForPlayers = false;
-            }
-
+            if(runner.ActivePlayers.Count() == 2) _waitingForPlayers = false;
         }
         else 
         {
-            var blocker = GameObject.Find("ScreenBlocker");
-            if (blocker) Destroy(blocker);
+            if (!p && PlayerModel.local) p = PlayerModel.local;            
 
-            print("que"); 
+            print("que");
+
             _waitingForPlayers = false; 
+        }
+
+        if (!p.myWaitingCanvas) p.myWaitingCanvas = Instantiate(waitingCanvas);
+        p.myWaitingText = p.myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
+        p.myWaitingText.text = "Successfully connected. \n Waiting for another player...";
+
+        //var blocker = GameObject.Find("ScreenBlocker");
+        //if (blocker) {print("blocker"); Destroy(blocker); }
+
+
+        if (runner.ActivePlayers.Count() == 2 || !_waitingForPlayers)
+        {
+            p.myWaitingCanvas.SetActive(false);
+
+            //PlayerModel.local.controller._netInputs.waiting = false;
+
+            //_waitingForPlayers = false;
         }
     }
 
@@ -88,7 +86,9 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
+        print("A new player is trying to join.");
 
+        if(runner.IsServer) p.myWaitingCanvas.SetActive(false);
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
@@ -98,7 +98,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
-
+        PlayerModel.local.Disconnect();
     }
 
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)

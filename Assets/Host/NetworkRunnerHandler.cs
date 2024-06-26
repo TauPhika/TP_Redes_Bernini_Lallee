@@ -17,14 +17,14 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public static NetworkRunnerHandler instance;
 
-    //void Awake() { instance = this; }
+    void Awake() { instance = this; }
 
     #region LOBBY
     public void JoinLobby()
     {
         if (runner) Destroy(runner);
         runner = Instantiate(_networkPrefab);
-        instance = runner.GetComponent<NetworkRunnerHandler>();
+        //instance = this;
 
         runner.AddCallbacks(this);
 
@@ -69,7 +69,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
             Scene = sceneToLoad,
             CustomLobbyName = "Main Lobby",
             SceneManager = sceneManager,
-            PlayerCount = 4
+            PlayerCount = 2
         };
 
         if(gameName != "New session" && sceneToLoad != null) print("Initializing...");
@@ -104,7 +104,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
     {
-        print("A new player is trying to join.");
+
     }
 
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)

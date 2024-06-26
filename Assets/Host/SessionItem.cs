@@ -11,7 +11,7 @@ public class SessionItem : MonoBehaviour
     [SerializeField] TextMeshProUGUI _sessionName, _playerAmount;
     [SerializeField] Button _joinSession;
     
-    public void SetInfo(SessionInfo sessionInfo, Action<SessionInfo> onClick)
+    public void SetInfo(SessionInfo sessionInfo, Action<SessionInfo> onClick, bool fillUp = false)
     {
         _sessionName.text = sessionInfo.Name;
 
@@ -22,11 +22,18 @@ public class SessionItem : MonoBehaviour
         }
         else 
         {
-            _playerAmount.text = "FULL";
-            _joinSession.enabled = false;
+            Full();
         }
+
+        if (fillUp) Full();
 
         _joinSession.onClick.AddListener(() => onClick(sessionInfo));
 
+    }
+
+    public void Full()
+    {
+        _playerAmount.text = "FULL";
+        _joinSession.enabled = false;
     }
 }

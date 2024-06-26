@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Fusion;
 using TMPro;
+using System.Linq;
 
 
 public class SessionBrowser : MonoBehaviour
@@ -51,7 +52,7 @@ public class SessionBrowser : MonoBehaviour
     void AddNewSessionItem(SessionInfo session)
     {
         var newItem = Instantiate(_sessionItem, _parent.transform);
-        newItem.SetInfo(session, JoinSelectedSession);
+        newItem.SetInfo(session, JoinSelectedSession, NetworkRunnerHandler.instance.runner.ActivePlayers.Count() - 2 >= session.MaxPlayers);
     }
 
     void JoinSelectedSession(SessionInfo session)

@@ -67,8 +67,8 @@ public class PlayerController : NetworkBehaviour
     // Devuelve el movimiento normal en x
     public float GetMovementX(float speed)
     {
-        _netInputs.movementX = Input.GetAxis("Horizontal") * speed;
-        return _netInputs.movementX;
+        PlayerModel.local._netInputs.movementX = Input.GetAxis("Horizontal") * speed;
+        return PlayerModel.local._netInputs.movementX;
     }
 
     // Devuelve el movimiento en Y, incluyendo salto y jetpack.
