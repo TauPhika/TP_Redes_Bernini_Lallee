@@ -42,7 +42,7 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(4.2f, 0.1f, 0);
+        reloadText.transform.position = _model.gameObject.transform.position + new Vector3(2.5f, 0.1f, 0);
         reloadText.transform.rotation = Quaternion.identity;
     }
 

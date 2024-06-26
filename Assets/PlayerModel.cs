@@ -70,10 +70,12 @@ public class PlayerModel : NetworkBehaviour
             local = this;
             print("este soy yo");
             view.mySprite.material.color = Color.cyan;
+            view.originalColor = view.mySprite.material.color;
         }
         else
         {
-            view.mySprite.material.color = Color.red;
+            view.mySprite.material.color = Color.red; 
+            view.originalColor = view.mySprite.material.color;
         }
 
         //myWaitingCanvas = Instantiate(PlayerSpawner.instance.waitingCanvas.gameObject);
