@@ -28,6 +28,7 @@ public class PlayerModel : NetworkBehaviour
 
     [Header("MOVEMENT")]
     public int speed;
+    public int maxSpeed;
     public int jumpHeight;
     public int dashForce;
     public bool limitDashing;
@@ -53,6 +54,7 @@ public class PlayerModel : NetworkBehaviour
 
     public event Action<float> OnLifeUpdate = delegate { };
     public event Action OnPlayerDespawn = delegate { };
+
 
     #endregion
 

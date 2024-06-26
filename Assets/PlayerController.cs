@@ -67,8 +67,8 @@ public class PlayerController : NetworkBehaviour
     // Devuelve el movimiento normal en x
     public float GetMovementX(float speed)
     {
-        PlayerModel.local._netInputs.movementX = Input.GetAxis("Horizontal") * speed;
-        return PlayerModel.local._netInputs.movementX;
+        _netInputs.movementX = Input.GetAxis("Horizontal") * speed;
+        return _netInputs.movementX;
     }
 
     // Devuelve el movimiento en Y, incluyendo salto y jetpack.
@@ -106,12 +106,16 @@ public class PlayerController : NetworkBehaviour
 
     public Vector3 Move()
     {
-        var move = new Vector3(GetMovementX(model.speed),
-                           GetMovementY(model.jumpHeight, model.jetpackPower),
-                           0) * Time.fixedDeltaTime;
+        var move = new Vector2(GetMovementX(model.speed),
+                           GetMovementY(model.jumpHeight, model.jetpackPower)) * Time.fixedDeltaTime;
 
-        // tiene que ver con moverse usando el local me parece.
-        PlayerModel.local.transform.position += move;
+        PlayerModel.local.playerRB.Rigidbody.position += move;
+
+        //if (move == Vector2.zero) PlayerModel.local.playerRB.Rigidbody.velocity = default;
+        //else 
+        //{
+        //    PlayerModel.local.playerRB.Rigidbody.AddForce(Vector2.ClampMagnitude(move * model.speed, model.maxSpeed), ForceMode2D.Impulse);
+        //} 
 
         return move;
     }

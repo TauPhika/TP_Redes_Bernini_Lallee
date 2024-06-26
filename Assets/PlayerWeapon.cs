@@ -37,7 +37,7 @@ public class PlayerWeapon : MonoBehaviour
 
         reloadText.fontSize = 5;
 
-        bulletOrigin = this.transform;
+        if(!bulletOrigin) bulletOrigin = this.transform;
     }
 
     private void Update()

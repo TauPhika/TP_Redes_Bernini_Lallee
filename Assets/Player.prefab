@@ -371,6 +371,7 @@ MonoBehaviour:
   healthText: {fileID: 9081512786845080459, guid: fb95cf64f8ef42a479f1a94b4b37121f, type: 3}
   nicknameText: {fileID: 5179146001635467961, guid: 47e4a17d3b1190a49bd85811b6347936, type: 3}
   speed: 3
+  maxSpeed: 1
   jumpHeight: 5
   dashForce: 6
   limitDashing: 1
