@@ -25,15 +25,15 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
-        if (runner.IsServer || runner.Topology == SimulationConfig.Topologies.ClientServer)
+        if (runner.IsServer)
         {
-            p = runner.Spawn(prefab: _playerPrefab,
+            var p = runner.Spawn(prefab: _playerPrefab,
                                  position: _spawningPoints[UnityEngine.Random.Range(0, _spawningPoints.Length)].transform.position,
                                  rotation: Quaternion.identity,
                                  inputAuthority: player);
 
             if (!p) print("no apareci");
-            PlayerModel.local = p;
+            //PlayerModel.local = p;
 
             var blocker = GameObject.Find("ScreenBlocker");
 
@@ -43,12 +43,27 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
             if (blocker) Destroy(blocker);
 
+
+
+            //print(p.gameObject.transform.position);
+
             if (runner.ActivePlayers.Count() == 2)
             {
                 //p.myWaitingCanvas.SetActive(false);
+
+                //PlayerModel.local.controller._netInputs.waiting = false;
+
                 _waitingForPlayers = false;
             }
 
+        }
+        else 
+        {
+            var blocker = GameObject.Find("ScreenBlocker");
+            if (blocker) Destroy(blocker);
+
+            print("que"); 
+            _waitingForPlayers = false; 
         }
     }
 
@@ -56,8 +71,8 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (!PlayerModel.local || _waitingForPlayers) return;
 
-        if (!_localInputs) _localInputs = PlayerModel.local.controller;
-        else {input.Set(_localInputs.GetLocalInputs()); print($"{PlayerModel.local.controller._netInputs.movementY} \n VS. {_localInputs._netInputs.movementY}"); }
+        if (!_localInputs) _localInputs = PlayerModel.local.GetComponent<PlayerController>();
+        input.Set(_localInputs.GetLocalInputs());
     }
 
     #region CALLBACKS

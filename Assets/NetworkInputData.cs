@@ -17,4 +17,5 @@ public struct NetworkInputData : INetworkInput
     public NetworkBool isJetpackPressed;
     public NetworkBool isDashPressed;
     public NetworkBool isRechargingJetpack;
+    public Vector3 dashDir;
 }

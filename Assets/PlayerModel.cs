@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using Fusion.Sockets;
 using System;
 using TMPro;
 using System.Linq;
@@ -64,7 +65,7 @@ public class PlayerModel : NetworkBehaviour
 
     public override void Spawned()
     {
-        if (Object.HasInputAuthority) 
+        if (Object.HasInputAuthority && local == null) 
         {
             local = this;
             print("este soy yo");
@@ -123,10 +124,6 @@ public class PlayerModel : NetworkBehaviour
         { 
             runner.Disconnect(Object.InputAuthority);
         }
-        else
-        {
-
-        }
 
         runner.Despawn(Object);
     }
@@ -135,6 +132,8 @@ public class PlayerModel : NetworkBehaviour
     {
         if (!_dying && GetInput(out _netInputs))
         {
+            //controller._netInputs = _netInputs;
+            
             if (!controller._netInputs.waiting) view.BuildUI();
 
             controller.Move();
@@ -147,12 +146,12 @@ public class PlayerModel : NetworkBehaviour
 
             if (_netInputs.isFirePressed && !weapon._isFiring) weapon.Fire();
 
-            if (_netInputs.isDashPressed) StartCoroutine(controller.Dash(controller.dashDir, dashForce));
+            if (_netInputs.isDashPressed) StartCoroutine(controller.Dash(_netInputs.dashDir, dashForce));
 
             //healthText.text = _health.ToString();
         }
 
-        print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
+        //print($"{_netInputs.movementX} | {_netInputs.movementY} | {_netInputs.rotation}");
     }
 
     public float GetHealth(int healthChange = default) { RPC_GetHealth(healthChange); return _health; }
@@ -212,7 +211,7 @@ public class PlayerModel : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.StateAuthority)]
     public void RPC_GameOver(bool won)
     {
-        myWaitingCanvas = Runner.Spawn(PlayerSpawner.instance.waitingCanvas).gameObject;
+        myWaitingCanvas = Runner.Spawn(myWaitingCanvas).gameObject;
         myWaitingCanvas.SetActive(true);
         myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
         if (won) myWaitingText.text = "Congratulations, you won!"; else myWaitingText.text = "You lost. Game Over.";
