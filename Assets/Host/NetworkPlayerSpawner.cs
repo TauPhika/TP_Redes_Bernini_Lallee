@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Fusion;
 using Fusion.Sockets;
 using TMPro;
@@ -42,7 +43,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             if (!p && PlayerModel.local) p = PlayerModel.local;            
 
-            print("que");
+            print("no soy host");
 
             _waitingForPlayers = false; 
         }
@@ -133,7 +134,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-
+        if (runner.IsServer) Application.Quit();
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)

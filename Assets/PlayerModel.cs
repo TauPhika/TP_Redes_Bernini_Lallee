@@ -122,10 +122,11 @@ public class PlayerModel : NetworkBehaviour
     {
         if (!Object.HasInputAuthority)
         { 
-            NetworkRunnerHandler.instance.runner.Disconnect(Object.InputAuthority);
+            runner.Disconnect(Object.InputAuthority);
         }
 
         NetworkRunnerHandler.instance.runner.Despawn(Object);
+        Destroy(gameObject);
     }
 
     public override void FixedUpdateNetwork()
@@ -211,10 +212,10 @@ public class PlayerModel : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.InputAuthority)]
     public void RPC_GameOver(bool won)
     {
-        if(!myWaitingCanvas.activeInHierarchy) myWaitingCanvas = NetworkRunnerHandler.instance.runner.Spawn(myWaitingCanvas).gameObject;
+        //if(!myWaitingCanvas.activeInHierarchy) myWaitingCanvas = Runner.Spawn(myWaitingCanvas).gameObject;
         myWaitingCanvas.SetActive(true);
         myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
-        if (won) myWaitingText.text = "Congratulations, you won!"; else myWaitingText.text = "You lost. Game Over.";
+        if (!won) myWaitingText.text = "You lost. Game Over."; else myWaitingText.text = "Congratulations, you won!";
         //Instantiate(myWaitingCanvas);
         Disconnect();
     }

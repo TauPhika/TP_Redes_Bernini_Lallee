@@ -36,6 +36,8 @@ public class PlayerWeapon : MonoBehaviour
                                 AddComponent<TextMeshPro>();
 
         reloadText.fontSize = 5;
+
+        bulletOrigin = this.transform;
     }
 
     private void Update()

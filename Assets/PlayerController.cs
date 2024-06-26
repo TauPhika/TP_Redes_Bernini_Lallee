@@ -95,7 +95,7 @@ public class PlayerController : NetworkBehaviour
     // Devuelve la rotacion en base a la posicion del mouse
     public Quaternion GetAimingRotation()
     {
-        target = cam.ScreenToWorldPoint(Input.mousePosition);
+        target = PlayerModel.local.controller.cam.ScreenToWorldPoint(Input.mousePosition);
 
         float radians = Mathf.Atan2(target.y - model.transform.position.y, target.x - model.transform.position.x);
         float radToDegrees = (180 / Mathf.PI) * radians;
@@ -225,7 +225,7 @@ public class PlayerController : NetworkBehaviour
 
     public IEnumerator Dash(Vector3 dir, float force)
     {
-        print("dasheando");
+        //print("dasheando");
 
         model.hasDashed = true;
         model.playerRB.Rigidbody.AddForce(dir * force, ForceMode2D.Impulse);
@@ -233,7 +233,7 @@ public class PlayerController : NetworkBehaviour
 
         yield return new WaitForSeconds(model.dashCooldown);
 
-        print("dasheandon't");
+        //print("dasheandon't");
 
         model.hasDashed = false;
         model.view.UpdateDashImage(true);
