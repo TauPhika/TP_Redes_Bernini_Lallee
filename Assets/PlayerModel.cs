@@ -129,8 +129,8 @@ public class PlayerModel : NetworkBehaviour
             runner.Disconnect(Object.InputAuthority);
         }
 
+        gameObject.SetActive(false);
         NetworkRunnerHandler.instance.runner.Despawn(Object);
-        Destroy(gameObject);
     }
 
     public override void FixedUpdateNetwork()

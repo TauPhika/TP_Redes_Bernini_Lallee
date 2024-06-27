@@ -109,6 +109,7 @@ public class PlayerController : NetworkBehaviour
         var move = new Vector2(GetMovementX(model.speed),
                            GetMovementY(model.jumpHeight, model.jetpackPower)) * Time.fixedDeltaTime;
 
+        // Ni esto ni el movimiento por AddForce funciona bien, se sigue trabando cuando no sos host 
         PlayerModel.local.playerRB.Rigidbody.position += move;
 
         //if (move == Vector2.zero) PlayerModel.local.playerRB.Rigidbody.velocity = default;
