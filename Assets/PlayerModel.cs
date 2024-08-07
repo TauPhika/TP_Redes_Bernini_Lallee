@@ -101,19 +101,19 @@ public class PlayerModel : NetworkBehaviour
     {
         if (!_dying && GetInput(out _netInputs))
         {
-            if (!controller._netInputs.waiting) view.BuildUI();
+            if (controller._netInputs.waiting) local.view.BuildUI();
             
             controller.Move();
 
-            if (_netInputs.isJumpPressed && !isAirborne) controller.Jump(jumpHeight);
+            if (local.controller._netInputs.isJumpPressed && !local.isAirborne) local.controller.Jump(jumpHeight);
 
-            var rot = controller.GetAimingRotation();
+            var rot = local.controller.GetAimingRotation();
 
-            if(_netInputs.rotation != Quaternion.identity) transform.rotation = rot;
+            if(local._netInputs.rotation != Quaternion.identity) local.weapon.bulletOrigin.parent.rotation = rot;
 
-            if (_netInputs.isFirePressed && !weapon._isFiring) weapon.Fire();
+            if (local.controller._netInputs.isFirePressed && !local.weapon._isFiring) local.weapon.Fire();
 
-            if(_netInputs.isDashPressed) StartCoroutine(controller.Dash(controller.dashDir, dashForce));
+            if(local.controller._netInputs.isDashPressed) StartCoroutine(controller.Dash(controller.dashDir, dashForce));
 
             //healthText.text = _health.ToString();
         }

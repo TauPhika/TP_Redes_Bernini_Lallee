@@ -60,6 +60,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             p.myWaitingCanvas.SetActive(false);
 
             PlayerModel.local.controller._netInputs.waiting = false;
+            p.controller._netInputs.waiting = false;
 
             _waitingForPlayers = false;
         }
@@ -69,7 +70,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (!PlayerModel.local || _waitingForPlayers) return;
 
-        if (!_localInputs) _localInputs = PlayerModel.local.GetComponent<PlayerController>();
+        if (!_localInputs) _localInputs = p.GetComponent<PlayerController>();
         input.Set(_localInputs.GetLocalInputs());
     }
 

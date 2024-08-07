@@ -81,6 +81,7 @@ public class PlayerView : MonoBehaviour
     void CreateObjectiveText()
     {
         objectiveText = Instantiate(textAsset, canvas.transform).GetComponent<TextMeshProUGUI>();
+        objectiveText.color = Color.white;
     }
     #endregion
 
