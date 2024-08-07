@@ -55,13 +55,13 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
         //if (blocker) {print("blocker"); Destroy(blocker); }
 
 
-        if (runner.ActivePlayers.Count() == 2 || !_waitingForPlayers)
+        if (runner.ActivePlayers.Count() == 2 && !_waitingForPlayers)
         {
             p.myWaitingCanvas.SetActive(false);
 
-            //PlayerModel.local.controller._netInputs.waiting = false;
+            PlayerModel.local.controller._netInputs.waiting = false;
 
-            //_waitingForPlayers = false;
+            _waitingForPlayers = false;
         }
     }
 
@@ -114,6 +114,18 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
         print("y se marcho");
+
+        print("The other player disconnected, going back to the main menu");
+        //_waitingForPlayers = true;
+        //runner.Despawn(p.Object);
+        //Destroy(p.gameObject);
+        ////foreach (var p in p.allPlayers)
+        ////{
+        ////    p.Disconnect();
+        ////}
+
+        //SceneManager.LoadScene("MainMenu");
+        //SessionBrowser.instance.ClearItemList(runner.SessionInfo);
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data)
@@ -133,7 +145,7 @@ public class NetworkPlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        if (runner.IsServer) Application.Quit();
+
     }
 
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)

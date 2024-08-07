@@ -10,6 +10,7 @@ public class SessionItem : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI _sessionName, _playerAmount;
     [SerializeField] Button _joinSession;
+    [HideInInspector] public SessionInfo thisSession;
     
     public void SetInfo(SessionInfo sessionInfo, Action<SessionInfo> onClick, bool fillUp = false)
     {

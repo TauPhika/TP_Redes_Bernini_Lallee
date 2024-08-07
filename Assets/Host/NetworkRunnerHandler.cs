@@ -15,7 +15,6 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public event Action OnLobbyConnected = delegate { };
     public event Action<List<SessionInfo>> OnSessionListUpdate = delegate { };
-    public Action asds = () => print("HAHAHAHAH");
 
     public static NetworkRunnerHandler instance;
 
@@ -27,10 +26,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
         
         if (runner) Destroy(runner);
         runner = Instantiate(_networkPrefab);
-        if (runner != null) 
-        {
-            OnLobbyConnected += asds;
-        }
+
         //instance = this;
 
         runner.AddCallbacks(this);
@@ -85,7 +81,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
         if (result.Ok)
         {
-            if (gameArgs.GameMode == GameMode.Host) print($"Created new {gameName} in {gameArgs.CustomLobbyName} successfully.");
+            if (gameArgs.GameMode == GameMode.Shared) print($"Created new {gameName} in {gameArgs.CustomLobbyName} successfully.");
             else print($"Joined {gameName} in {gameArgs.CustomLobbyName} successfully.");
         }
         else print("nop");

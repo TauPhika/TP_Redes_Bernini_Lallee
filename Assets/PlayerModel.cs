@@ -4,6 +4,7 @@ using UnityEngine;
 using Fusion;
 using System;
 using TMPro;
+using System.Linq;
 
 
 public class PlayerModel : NetworkBehaviour
@@ -69,8 +70,8 @@ public class PlayerModel : NetworkBehaviour
         if (Object.HasInputAuthority) local = this;
 
         view.mySprite.material.color = Color.cyan;
-        var otherPlayer = FindObjectsOfType<PlayerModel>();
-        foreach (var p in otherPlayer)
+        allPlayers = FindObjectsOfType<PlayerModel>().ToList();
+        foreach (var p in allPlayers)
         {
             if (p != this) view.mySprite.material.color = Color.red;
         }
@@ -144,11 +145,12 @@ public class PlayerModel : NetworkBehaviour
     {
         if (!Object.HasInputAuthority)
         {
+            NetworkRunnerHandler.instance.runner.Despawn(Object);
             NetworkRunnerHandler.instance.runner.Disconnect(Object.InputAuthority);
         }
 
         gameObject.SetActive(false);
-        NetworkRunnerHandler.instance.runner.Despawn(Object);
+        
     }
 
     #region FEEDBACKS

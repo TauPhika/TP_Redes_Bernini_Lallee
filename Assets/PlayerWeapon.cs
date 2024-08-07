@@ -60,8 +60,12 @@ public class PlayerWeapon : MonoBehaviour
     {
         _isFiring = true;
 
-        GameObject bullet = PlayerSpawner.instance.runner.Spawn(bulletPrefab, bulletOrigin.transform.position, bulletOrigin.transform.rotation).
-                            GetComponent<Bullet>().SetPlayer(this);
+        GameObject bullet = NetworkRunnerHandler.instance.runner.Spawn
+                            (bulletPrefab, 
+                            bulletOrigin.transform.position,
+                            bulletOrigin.transform.rotation)
+                            .GetComponent<Bullet>()
+                            .SetPlayer(this);
 
         NetworkRigidbody2D rb = bullet.GetComponent<NetworkRigidbody2D>();
         rb.Rigidbody.AddForce(bulletOrigin.transform.right * bulletPower, ForceMode2D.Impulse);

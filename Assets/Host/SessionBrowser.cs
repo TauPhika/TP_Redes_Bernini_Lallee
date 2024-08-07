@@ -9,6 +9,7 @@ using System.Linq;
 
 public class SessionBrowser : MonoBehaviour
 {
+    public static SessionBrowser instance;
     [SerializeField] NetworkRunnerHandler _networkRunner;
 
     [SerializeField] TextMeshProUGUI _emptyText, _joiningText;
@@ -17,7 +18,12 @@ public class SessionBrowser : MonoBehaviour
 
     [SerializeField] VerticalLayoutGroup _parent;
 
-    private void OnEnable()
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    void OnEnable()
     {
         _joiningText.gameObject.SetActive(false);
         _networkRunner.OnSessionListUpdate += ReceiveSessionList;
@@ -40,11 +46,26 @@ public class SessionBrowser : MonoBehaviour
         }
     }
 
-    void ClearItemList()
+    public void ClearItemList(SessionInfo info = default)
     {
-        foreach(GameObject item in _parent.transform) Destroy(item);
+        var itemList = _parent.transform.GetComponentsInChildren<SessionItem>().ToList();
+        
+        if (info != default) 
+        {
+            foreach (var item in itemList)
+            {
+                if(item.thisSession == info) Destroy(item);
+            }
 
-        _emptyText.gameObject.SetActive(false);
+            if(itemList.Count <= 0) _emptyText.gameObject.SetActive(true);
+        }
+        else
+        {
+            foreach (var item in itemList) Destroy(item);
+
+            _emptyText.gameObject.SetActive(false);
+        }
+
     }
 
     void NoSessionAvailable() { _emptyText.gameObject.SetActive(true); }
