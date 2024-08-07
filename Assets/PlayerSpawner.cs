@@ -31,7 +31,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public void OnConnectedToServer(NetworkRunner runner)
     {
 
-        if(runner.Topology == SimulationConfig.Topologies.Shared && allPlayers.Count < 3)
+        if(runner.Topology == SimulationConfig.Topologies.Shared && runner.ActivePlayers.Count() < 3)
         {
             var localPlayer = runner.Spawn(player,
                                            spawningPoints[Random.Range(0, spawningPoints.Length)].transform.position,
@@ -43,7 +43,7 @@ public class PlayerSpawner : MonoBehaviour, INetworkRunnerCallbacks
             allPlayers.Add(localPlayer);
             allPlayers.Add(localPlayer);
 
-            print($"Player {allPlayers.Count} has connected.");
+            print($"Player {runner.ActivePlayers.Count()} has connected.");
 
             localPlayer.myWaitingText.text = "Successfully connected. Waiting for another player...";
 

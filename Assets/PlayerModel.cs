@@ -14,7 +14,7 @@ public class PlayerModel : NetworkBehaviour
     public PlayerView view;
     public PlayerController controller;
     public PlayerWeapon weapon;
-    public NetworkRunner runner;
+    //public NetworkRunner runner;
         
     [Header("HEALTH")]
     public int maxHealth;
@@ -67,12 +67,6 @@ public class PlayerModel : NetworkBehaviour
     public override void Spawned()
     {
         if (Object.HasInputAuthority) local = this;
-
-        myWaitingCanvas = Instantiate(PlayerSpawner.instance.waitingCanvas.gameObject);
-        myWaitingText = myWaitingCanvas.GetComponentInChildren<TextMeshProUGUI>();
-        PlayerSpawner.instance.waitingCanvas.gameObject.SetActive(false);
-        //PlayerSpawner.instance.allPlayers.Add(this);
-        //allPlayers = PlayerSpawner.instance.allPlayers;
 
         view.mySprite.material.color = Color.cyan;
         var otherPlayer = FindObjectsOfType<PlayerModel>();
@@ -144,6 +138,17 @@ public class PlayerModel : NetworkBehaviour
         }
 
         if (_health <= 0) StartCoroutine(DeathFeedback());
+    }
+
+    public void Disconnect()
+    {
+        if (!Object.HasInputAuthority)
+        {
+            NetworkRunnerHandler.instance.runner.Disconnect(Object.InputAuthority);
+        }
+
+        gameObject.SetActive(false);
+        NetworkRunnerHandler.instance.runner.Despawn(Object);
     }
 
     #region FEEDBACKS

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4218853146741150097}
   - component: {fileID: 5005964557963021443}
   - component: {fileID: 2171006896419004198}
-  - component: {fileID: 5451488217117070447}
+  - component: {fileID: -7291738509635219358}
   m_Layer: 0
   m_Name: NetworkRunner
   m_TagString: Untagged
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowHierarchyWindowOverlay: 1
   PostLoadDelayFrames: 1
---- !u!114 &5451488217117070447
+--- !u!114 &-7291738509635219358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,7 +69,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6526959187091548024}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e11f83990e5c6eb46b1a18639cac7859, type: 3}
+  m_Script: {fileID: 11500000, guid: 052e7848b87a0844ab50bf3e85b491b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _networkRunner: {fileID: 5005964557963021443}
+  _playerPrefab: {fileID: 7558081798318744653, guid: 3b5d4b08aebdaa94daee19771ff43231, type: 3}
+  waitingCanvas: {fileID: 31468591275596972, guid: cddb5e6fa0e64074bb2995b48a533ca0, type: 3}
+  waitingText: {fileID: 0}
